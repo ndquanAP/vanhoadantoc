@@ -33,7 +33,7 @@
 
     /* Layout */
     --header-height: 56px;
-    --container-max: 1200px;
+    --container-max: 1307px;
 }
 
 /* ===== Global Styles ===== */
@@ -427,16 +427,16 @@ body {
 
 /* ===== Footer ===== */
 .footer {
-    background: var(--color-primary-dark);
-    color: #fff;
-    padding: 2rem 0;
+    width: 100%;
     margin-top: 3rem;
+    position: relative;
+    padding: 0;
 }
 
 .footer-content {
     text-align: center;
     font-size: 0.875rem;
-    opacity: 0.8;
+    opacity: 1;
 }
 
 /* ===== Swiper Customization ===== */
