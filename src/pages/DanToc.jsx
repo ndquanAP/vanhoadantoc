@@ -71,6 +71,9 @@ export default function DanToc() {
                     <button
                         onClick={() => setSelectedEthnic(null)}
                         className="absolute bottom-4 left-4 bg-white/20 hover:bg-white/40 px-4 py-1 rounded-md text-sm"
+                        style={{
+                            padding: `5px`
+                        }}
                     >
                         ← Quay lại
                     </button>
