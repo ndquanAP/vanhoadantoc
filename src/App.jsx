@@ -4,28 +4,32 @@ import VanHoa from './pages/VanHoa';
 import ChinhSach from './pages/ChinhSach';
 import Admin from './pages/Admin';
 
-// Placeholder components for other pages
-function DanToc() {
-    return (
-        <div className="container" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
-            <h1 className="section-title" style={{ fontSize: '2rem', marginBottom: '1rem' }}>
-                Các Dân Tộc
-            </h1>
-            <p style={{ color: 'var(--color-text-muted)' }}>Trang này đang được phát triển...</p>
-        </div>
-    );
-}
+import DanToc from './pages/DanToc';
+import TonGiao from './pages/TonGiao';
 
-function TonGiao() {
-    return (
-        <div className="container" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
-            <h1 className="section-title" style={{ fontSize: '2rem', marginBottom: '1rem' }}>
-                Tôn Giáo
-            </h1>
-            <p style={{ color: 'var(--color-text-muted)' }}>Trang này đang được phát triển...</p>
-        </div>
-    );
-}
+
+// Placeholder components for other pages
+// function DanToc() {
+//     return (
+//         <div className="container" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
+//             <h1 className="section-title" style={{ fontSize: '2rem', marginBottom: '1rem' }}>
+//                 Các Dân Tộc
+//             </h1>
+//             <p style={{ color: 'var(--color-text-muted)' }}>Trang này đang được phát triển...</p>
+//         </div>
+//     );
+// }
+
+// function TonGiao() {
+//     return (
+//         <div className="container" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
+//             <h1 className="section-title" style={{ fontSize: '2rem', marginBottom: '1rem' }}>
+//                 Tôn Giáo
+//             </h1>
+//             <p style={{ color: 'var(--color-text-muted)' }}>Trang này đang được phát triển...</p>
+//         </div>
+//     );
+// }
 
 function DiTich() {
     return (
