@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import VanHoa from './pages/VanHoa';
+import ChinhSach from './pages/ChinhSach';
+import Admin from './pages/Admin';
 
 // Placeholder components for other pages
 function DanToc() {
@@ -36,21 +38,14 @@ function DiTich() {
     );
 }
 
-function ChinhSach() {
-    return (
-        <div className="container" style={{ padding: '3rem 1rem', textAlign: 'center' }}>
-            <h1 className="section-title" style={{ fontSize: '2rem', marginBottom: '1rem' }}>
-                Chính Sách
-            </h1>
-            <p style={{ color: 'var(--color-text-muted)' }}>Trang này đang được phát triển...</p>
-        </div>
-    );
-}
-
 function App() {
     return (
         <BrowserRouter>
             <Routes>
+                {/* Admin route - no layout wrapper */}
+                <Route path="/admin" element={<Admin />} />
+                
+                {/* Public routes with MainLayout */}
                 <Route path="/" element={<MainLayout />}>
                     <Route index element={<Navigate to="/van-hoa" replace />} />
                     <Route path="dan-toc" element={<DanToc />} />

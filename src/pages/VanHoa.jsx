@@ -7,6 +7,7 @@ import 'swiper/css/navigation';
 
 import frameImg from '../assets/imagesAssets/khungslide.png';
 import arrowImg from '../assets/imagesAssets/nextbackbtn.png';
+import tempImg from '../assets/imagesAssets/thumb_660_34aa3113-a4a7-4b55-a0d9-9d7e619dc457.jpg';
 
 // Mock data for the hero slider
 const heroSlides = [
@@ -128,26 +129,10 @@ export default function VanHoa() {
                                 {heroSlides.map((slide) => (
                                     <SwiperSlide key={slide.id}>
                                         <div className="hero-slide h-full">
-                                            {/* Placeholder gradient for images */}
-                                            <div
-                                                className="w-full h-full"
-                                                style={{
-                                                    background: 'linear-gradient(135deg, #1a5d3a 0%, #2d8a56 50%, #c9a227 100%)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                }}
-                                            >
-                                                <div className="text-center text-white p-8">
-                                                    <div className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2" style={{ fontFamily: 'serif' }}>
-                                                        {slide.title}
-                                                    </div>
-                                                    <div className="text-xl opacity-90">{slide.date}</div>
-                                                </div>
-                                            </div>
-                                            <div className="hero-content">
-                                                <p className="text-sm text-gray-600 mb-1">Địa điểm</p>
-                                                <p className="font-medium text-gray-800">{slide.location || 'Việt Nam'}</p>
+                                            <img src={tempImg} alt={slide.title} className="w-full h-full object-cover" />
+                                            <div className="hero-overlay">
+                                                <h2 className="hero-title">{slide.title}</h2>
+                                                <p className="hero-subtitle">{slide.date}</p>
                                             </div>
                                         </div>
                                     </SwiperSlide>
@@ -180,29 +165,21 @@ export default function VanHoa() {
                 <section className="main-content">
                     <div className="section-header">
                         <h2 className="section-title">Tin Tức</h2>
+                        <a href="/van-hoa/tin-tuc" className="section-see-all">Xem tất cả</a>
                     </div>
 
                     {newsItems.map((item) => (
                         <a href={`/van-hoa/tin-tuc/${item.id}`} key={item.id} className="news-card">
                             <div className="news-card-image">
-                                <div
-                                    className="w-full h-full"
-                                    style={{
-                                        background: `linear-gradient(135deg, #1a5d3a 0%, #2d8a56 100%)`,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <span className="text-white text-xs">Ảnh</span>
-                                </div>
+                                <img src={tempImg} alt={item.title} />
                             </div>
                             <div className="news-card-content">
                                 <span className="news-card-date">
-                                    📅 {item.date}
+                                    {item.date}
                                 </span>
                                 <h3 className="news-card-title">{item.title}</h3>
                                 <p className="news-card-excerpt">{item.excerpt}</p>
+                                <span className="news-card-readmore">Đọc thêm</span>
                             </div>
                         </a>
                     ))}
@@ -212,25 +189,16 @@ export default function VanHoa() {
                 <aside className="sidebar">
                     <div className="section-header">
                         <h2 className="section-title">Sự Kiện</h2>
+                        <a href="/van-hoa/su-kien" className="section-see-all">Xem tất cả</a>
                     </div>
 
                     {events.map((event) => (
                         <a href={`/van-hoa/su-kien/${event.id}`} key={event.id} className="event-card">
                             <div className="event-card-image">
-                                <div
-                                    className="w-full h-full"
-                                    style={{
-                                        background: `linear-gradient(135deg, #c9a227 0%, #e5c85c 100%)`,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <span className="text-white text-xs">🎭</span>
-                                </div>
+                                <img src={tempImg} alt={event.title} />
+                                <div className="event-card-date">{event.date}</div>
                             </div>
                             <div className="event-card-content">
-                                <div className="event-card-date">{event.date}</div>
                                 <h4 className="event-card-title">{event.title}</h4>
                                 <div className="event-card-tag">{event.tag}</div>
                             </div>
