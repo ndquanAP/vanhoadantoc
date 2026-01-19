@@ -276,6 +276,7 @@ body {
     .hero-title {
         font-size: 2rem;
     }
+
     .hero-subtitle {
         font-size: 1.25rem;
     }
@@ -810,16 +811,16 @@ body {
 
 /* ===== Footer ===== */
 .footer {
-    background: var(--color-primary-dark);
-    color: #fff;
-    padding: 2rem 0;
+    width: 100%;
     margin-top: 3rem;
+    position: relative;
+    padding: 0;
 }
 
 .footer-content {
     text-align: center;
     font-size: 0.875rem;
-    opacity: 0.8;
+    opacity: 1;
 }
 
 /* ===== Swiper Customization ===== */

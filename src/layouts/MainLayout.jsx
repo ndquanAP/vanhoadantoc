@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import footerBg from '../assets/imagesAssets/backgroundfooter.png';
 
 const navItems = [
     { path: '/dan-toc', label: 'Dân Tộc' },
@@ -36,10 +37,17 @@ export default function MainLayout() {
             </main>
 
             {/* Footer */}
-            <footer className="footer">
-                <div className="container">
-                    <div className="footer-content">
-                        <p>© 2025 Văn Hoá Dân Tộc Việt Nam. Tất cả quyền được bảo lưu.</p>
+            <footer className="footer relative p-0 mt-12 w-full">
+                <img
+                    src={footerBg}
+                    alt="Footer Background"
+                    className="w-full h-auto block"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="container">
+                        <div className="footer-content">
+                            {/* <p className="text-white">© 2025 Văn Hoá Dân Tộc Việt Nam. Tất cả quyền được bảo lưu.</p> */}
+                        </div>
                     </div>
                 </div>
             </footer>
