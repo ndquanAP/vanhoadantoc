@@ -27,15 +27,117 @@ import tayThaiImg3 from '../assets/imagesAssets/dan-toc/tay-thai/highlight_3.png
 
 
 
+// const ETHNIC_DATA = [
+//     { id: 'dao', name: 'DAO', color: '#1a4332' },
+//     { id: 'tay-thai', name: 'TÀY THÁI', color: '#1a4332', isFull: true },
+//     { id: 'kinh', name: 'KINH', color: '#1a4332' },
+//     { id: 'nung', name: 'NÙNG', color: '#1a4332' },
+//     { id: 'san-diu', name: 'SÁN DÌU', color: '#1a4332' },
+//     { id: 'san-chay', name: 'SÁN CHAY', color: '#1a4332' },
+//     { id: 'hmong', name: 'H’MÔNG', color: '#1a4332' },
+//     { id: 'hoa', name: 'HOA', color: '#1a4332' },
+// ];
+
+
 const ETHNIC_DATA = [
-    { id: 'dao', name: 'DAO', color: '#1a4332' },
-    { id: 'tay-thai', name: 'TÀY THÁI', color: '#1a4332', isFull: true },
-    { id: 'kinh', name: 'KINH', color: '#1a4332' },
-    { id: 'nung', name: 'NÙNG', color: '#1a4332' },
-    { id: 'san-diu', name: 'SÁN DÌU', color: '#1a4332' },
-    { id: 'san-chay', name: 'SÁN CHAY', color: '#1a4332' },
-    { id: 'hmong', name: 'H’MÔNG', color: '#1a4332' },
-    { id: 'hoa', name: 'HOA', color: '#1a4332' },
+    {
+        id: 'tay-thai',
+        name: 'TÀY THÁI',
+        headerImg: tayThaiHeader, // The "DÂN TỘC TÀY THÁI" text image
+        cardAvatar: danToc_1_img,
+        avatar: tayThaiAva,
+        description: "Người Tày là một trong những dân tộc thiểu số có số dân đông nhất ở Việt Nam...",
+        gallery: [tayThaiImg1, tayThaiImg2, tayThaiImg3],
+        subTitle: "giữa núi rừng Đông Bắc",
+        subContent: "Người Thái có nhiều kinh nghiệm đắp phai, đào mương...",
+        footerContent: "Người Tày sinh sống tập trung tại các huyện miền núi..."
+        
+    },
+    {
+        id: 'dao',
+        name: 'DAO',
+        headerImg: null,
+        cardAvatar: danToc_1_img,
+        avatar: null,
+        description: "",
+        gallery: [],
+        subTitle: "Nét đẹp vùng cao",
+        subContent: "",
+        footerContent: ""
+    },
+    {
+        id: 'kinh',
+        name: 'KINH',
+        headerImg: null,
+        cardAvatar: danToc_1_img,
+        avatar: null,
+        description: "",
+        gallery: [],
+        subTitle: "Cội nguồn văn hóa",
+        subContent: "",
+        footerContent: ""
+    },
+    {
+        id: 'nung',
+        name: 'NÙNG',
+        headerImg: null,
+        cardAvatar: danToc_1_img,
+        avatar: null,
+        description: "",
+        gallery: [],
+        subTitle: "Sắc màu chàm đặc trưng",
+        subContent: "",
+        footerContent: ""
+    },
+    {
+        id: 'san-diu',
+        name: 'SÁN DÌU',
+        headerImg: null,
+        cardAvatar: danToc_1_img,
+        avatar: null,
+        description: "",
+        gallery: [],
+        subTitle: "Văn hóa làng bản",
+        subContent: "",
+        footerContent: ""
+    },
+    {
+        id: 'san-chay',
+        name: 'SÁN CHAY',
+        headerImg: null,
+        cardAvatar: danToc_1_img,
+        avatar: null,
+        description: "",
+        gallery: [],
+        subTitle: "Vũ điệu Tắc Xình",
+        subContent: "",
+        footerContent: ""
+    },
+    {
+        id: 'hmong',
+        name: 'H’MÔNG',
+        headerImg: null,
+        cardAvatar: danToc_1_img,
+        avatar: null,
+        description: "",
+        gallery: [],
+        subTitle: "Bản tình ca trên đỉnh núi",
+        subContent: "",
+        footerContent: ""
+    },
+    {
+        id: 'hoa',
+        name: 'HOA',
+        headerImg: null,
+        cardAvatar: danToc_1_img,
+        avatar: null,
+        description: "",
+        gallery: [],
+        subTitle: "Giao thoa bản sắc",
+        subContent: "",
+        footerContent: ""
+    }
+    // Add others here (Kinh, Nung, etc.)
 ];
 
 export default function DanToc() {
@@ -81,27 +183,29 @@ export default function DanToc() {
                         DÂN TỘC {selectedEthnic.name}
                     </h1> */}
 
-                    <img src={tayThaiHeader} className="mx-auto w-125"></img>
+                    {/* DYNAMIC HEADER IMAGE - Restored to your exact original <img> tag */}
+                    <img
+                        src={selectedEthnic.headerImg}
+                        className="mx-auto w-125"
+                        alt={selectedEthnic.name}
+                    />
 
-                    {/* Circular Placeholder for Illustration */}
-
-
+                    {/* Circular Placeholder - Restored to your exact original structure */}
                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-40 h-40 rounded-full z-30 bg-gray-200">
 
-                        {/* Background Image - Thêm rounded-full và overflow-hidden riêng cho nền nếu cần */}
+                        {/* Background Image - Restored scale-150 and removed opacity filters */}
                         <img
                             src={infoAvaBG}
                             alt="Background"
                             className="absolute inset-0 w-full h-full object-cover rounded-full scale-150"
                         />
 
-                        {/* Foreground Avatar - Phóng to và hiển thị đè lên trên */}
+                        {/* Foreground Avatar - Restored z-40 and scale-175 */}
                         <img
-                            src={tayThaiAva}
+                            src={selectedEthnic.avatar} // Dynamic key mapping
                             alt="Avatar"
                             className="absolute inset-0 w-full h-full object-contain z-40 transform scale-175"
                         />
-                        {/* Tăng scale-150 lên scale-175 hoặc hơn nếu bạn muốn nó to nữa */}
                     </div>
 
 
@@ -109,75 +213,54 @@ export default function DanToc() {
 
                 </div>
 
-                {/* Content Section */}
-
-
-                <div className='dantoc-container  relative z-10'
-                >
-                    <div className="max-w-5xl mx-auto px-6 mt-24 text-center"
-                        style={{
-                            paddingTop: '150px'
-                        }}
+                {/* CONTENT SECTION */}
+                <div className="dantoc-container relative z-10">
+                    <div
+                        className="max-w-5xl mx-auto px-6 text-center"
+                        style={{ paddingTop: '150px' }} // Added space for the floating avatar
                     >
-                        <p className="mb-8 text-justify">
-                            Người {selectedEthnic.name} là một trong những dân tộc thiểu số có số dân
-                            đông nhất ở Việt Nam, sinh sống tập trung tại các tỉnh vùng Đông Bắc
-                            , trong đó Thái Nguyên là một địa bàn quan trọng. Cộng đồng người {selectedEthnic.name} gắn bó lâu đời với núi rừng, sông suối và
-                            nền nông nghiệp lúa nước truyền thống. Qua nhiều thế hệ, họ đã hình thành nên một bản sắc văn hóa đặc trưng,
-                            thể hiện rõ trong kiến trúc nhà sàn, trang phục chàm, tín ngưỡng dân gian và các loại hình nghệ thuật truyền thống.
-                            Những giá trị ấy tạo nên một không gian văn hóa mộc mạc, bền bỉ và giàu bản sắc giữa vùng núi rừng Đông Bắc.
+                        {/* DYNAMIC DESCRIPTION */}
+                        <p className="mb-8 text-justify leading-relaxed">
+                            {selectedEthnic.description}
                         </p>
 
-                        {/* Photo Gallery Grid */}
-                        {/* Thay đổi grid-cols-3 thành grid-cols-5 */}
-
-
+                        {/* DYNAMIC GALLERY - RESTORED FLEX BEHAVIOR */}
                         <div className="flex flex-wrap gap-2 my-8" style={{ marginTop: '30px' }}>
-
-                            {/* Ảnh 1: Tự động co giãn theo tỉ lệ ảnh gốc */}
+                            {/* Image 1 & 2 share a row */}
                             <div className="h-48 flex-grow">
                                 <img
-                                    src={tayThaiImg1}
-                                    className="h-full w-full object-contain  rounded"
-                                    alt="Hoạt động 1"
+                                    src={selectedEthnic.gallery[0]}
+                                    className="h-full w-full object-contain rounded"
+                                    alt="1"
+                                />
+                            </div>
+                            <div className="h-48 flex-grow">
+                                <img
+                                    src={selectedEthnic.gallery[1]}
+                                    className="h-full w-full object-contain rounded"
+                                    alt="2"
                                 />
                             </div>
 
-                            {/* Ảnh 2: Tự động co giãn theo tỉ lệ ảnh gốc */}
-                            <div className="h-48 flex-grow">
-                                <img
-                                    src={tayThaiImg2}
-                                    className="h-full w-full object-contain  rounded"
-                                    alt="Hoạt động 2"
-                                />
-                            </div>
-
-                            {/* Ảnh 3: Dòng riêng bên dưới */}
+                            {/* Image 3 takes a full row below */}
                             <div className="w-full flex justify-center mt-2">
                                 <div className="h-64 w-full max-w-4xl">
                                     <img
-                                        src={tayThaiImg3}
+                                        src={selectedEthnic.gallery[2]}
                                         className="h-full w-full object-contain rounded"
-                                        alt="Toàn cảnh"
+                                        alt="3"
                                     />
                                 </div>
                             </div>
                         </div>
 
-
-
-
-                        {/* Sub-heading Decoration Section */}
+                        {/* DYNAMIC SUB-HEADING BOX - RESTORED DIMENSIONS & STYLING */}
                         <div className="relative mt-24 mb-20 px-4" style={{ marginTop: '50px' }}>
-                            {/* The Decorative Border Box */}
-                            <div className="border border-[#b34026] p-8 md:p-12 pt-16 relative w-[500px] max-w-[90%]"
-                                style={{
-                                    margin: '0 auto'
-                                }}
+                            <div
+                                className="border border-[#b34026] p-8 md:p-12 pt-16 relative w-[500px] max-w-[90%]"
+                                style={{ margin: '0 auto' }}
                             >
-
-
-                                {/* The Label: "Bản sắc văn hóa" - Tăng diện tích phần trong suốt */}
+                                {/* The Label */}
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 
                                     bg-white/10 backdrop-blur-lg 
                                     px-16 py-4           
@@ -192,68 +275,34 @@ export default function DanToc() {
                                     </h3>
                                 </div>
 
-                                {/* Large Stylized Title - Giữ text-center, không để class màu */}
-                                <h3 className="text-xl md:text-2xl  mb-8 text-center tracking-wide"
-                                    style={{
-                                        marginTop: '10px',
-                                        color: '#A30C0C'
-                                    }}
+                                {/* Dynamic Stylized Title */}
+                                <h3
+                                    className="text-xl md:text-2xl mb-8 text-center tracking-wide"
+                                    style={{ marginTop: '10px', color: '#A30C0C' }}
                                 >
-                                    giữa núi rừng Tây Bắc
+                                    {selectedEthnic.subTitle}
                                 </h3>
 
-
-                                {/* The Text Content: Removed mx-auto and text-center (default is left) */}
+                                {/* Dynamic Box Content */}
                                 <div className="flex flex-col items-center w-full">
-
-                                    {/* THE TEXT BOX: Resize bằng max-w và giữ text-justify */}
-                                    <div className="max-w w-full">
-                                        <p className="leading-relaxed text-sm md:text-base text-justify"
-                                            style={{
-                                                padding: '20px'
-                                            }}
-                                        >
-                                            Người {selectedEthnic.name} có nhiều kinh nghiệm đắp phai, đào mương, dựng cọn,
-                                            bắc máng lấy nước làm ruộng. Lúa nước là nguồn lương thực chính,
-                                            đặc biệt là lúa nếp. Người Thái cũng làm mương để trồng lúa, hoa màu và nhiều thứ cây khác.
-                                            Từng gia đình chăn nuôi gia súc, gia cầm, đan lát, dệt vải, một số nơi làm đồ gốm...
-                                            Sản phẩm nổi tiếng của người Thái là vải thổ cẩm, với những văn hoá độc đáo,
-                                            màu sắc tươi hài hoà, bền đẹp.
-                                        </p>
-                                    </div>
-
+                                    <p
+                                        className="leading-relaxed text-sm md:text-base text-justify"
+                                        style={{ padding: '10px' }}
+                                    >
+                                        {selectedEthnic.subContent}
+                                    </p>
                                 </div>
-
-
                             </div>
                         </div>
 
-
-                        {/* Third section */}
-
-                        <p className="mb-8 text-justify"
-                            style={{
-                                marginTop: '50px',
-                            }}
+                        {/* DYNAMIC FOOTER TEXT */}
+                        <p
+                            className="mb-20 text-justify leading-relaxed whitespace-pre-line"
+                            style={{ marginTop: '50px' }}
                         >
-                            Người {selectedEthnic.name} sinh sống tập trung tại các huyện miền núi và
-                            trung du của tỉnh Thái Nguyên, thường quần tụ thành từng bản làng nằm ven suối,
-                            chân núi hoặc thung lũng thấp. Mỗi bản có từ vài chục đến hàng trăm nóc nhà, gắn bó chặt chẽ trong sinh hoạt cộng đồng. Người {selectedEthnic.name} truyền
-                            thống ở nhà sàn làm bằng gỗ, mái lợp lá cọ hoặc ngói âm dương. Nhà thường quay mặt ra cánh đồng hoặc dòng nước, vừa thuận tiện cho
-                            sản xuất nông nghiệp, vừa mang ý nghĩa phong thuỷ. Không gian nhà được phân chia rõ ràng giữa nơi sinh hoạt, tiếp khách và thờ cúng tổ tiên.
-                            <br /><br />
-                            Người {selectedEthnic.name} quan niệm con người sau khi mất sẽ tiếp tục sang một thế giới khác. Vì vậy, lễ tang được tổ chức trang trọng như một nghi lễ tiễn
-                            đưa người đã khuất về với tổ tiên.
-                            <br /><br />
-                            Đồng bào {selectedEthnic.name} thờ cúng tổ tiên, thần núi, thần sông và các lực lượng siêu nhiên gắn với bản mường. Các dòng họ có những quy định,
-                            kiêng kỵ riêng nhằm giữ gìn sự hài hoà trong cộng đồng. Trong năm, người {selectedEthnic.name} tổ chức nhiều lễ nghi nông nghiệp như lễ cầu mùa, lễ xuống đồng,
-                            thể hiện ước mong mùa màng gối hoà, mùa màng bội thu.
-                            <br /><br />
+                            {selectedEthnic.footerContent}
                         </p>
-
-
                     </div>
-
                 </div>
 
             </div>
@@ -309,7 +358,7 @@ export default function DanToc() {
 
                             {/* 2. danToc_1_img: Positioned AFTER the frame to show OVER it */}
                             <img
-                                src={danToc_1_img}
+                                src={ethnic.cardAvatar}
                                 className="relative w-[85%] h-[85%] object-cover z-10"
                                 alt={ethnic.name}
                             />
