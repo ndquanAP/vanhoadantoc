@@ -37,7 +37,7 @@ export default function MainLayout() {
             </main>
 
             {/* Footer */}
-            <footer className="footer relative p-0 mt-12 w-full">
+            <footer className="footer relative p-0 mt-12 w-full" style={{ padding: '0' }} >
                 <img
                     src={footerBg}
                     alt="Footer Background"

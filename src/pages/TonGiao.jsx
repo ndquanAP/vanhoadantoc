@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -16,30 +16,127 @@ import bottomBg from '../assets/imagesAssets/ton-giao/half_bottom.png';
 
 import textTonGiao from '../assets/imagesAssets/ton-giao/text_ton_giao.png';
 
+// Reusing generic assets from DanToc for detail view consistency
+import infoTop from '../assets/imagesAssets/dan-toc/info_top.png';
+import infoBottom from '../assets/imagesAssets/dan-toc/info_bottom.png';
+import infoAvaBG from '../assets/imagesAssets/dan-toc/info_avatar_bg.png';
+
 
 const RELIGION_DATA = [
   {
     id: 'phat-giao',
     name: 'PHẬT GIÁO',
-    // image: '/path-to-buddha.png', 
-    image: phatGiaoImg, // Replace with your actual asset path
-
+    image: phatGiaoImg,
+    description: "Phật giáo du nhập vào nước ta từ rất sớm và nhanh chóng hòa nhập với tín ngưỡng bản địa, trở thành một phần quan trọng trong đời sống tâm linh của người Việt. Với triết lý từ bi, hỷ xả, Phật giáo đã góp phần định hình hệ giá trị đạo đức, lối sống hướng thiện và tinh thần khoan dung của dân tộc.",
   },
   {
     id: 'kito-giao',
     name: 'KITÔ GIÁO',
     image: kitoGiaoImg,
+    description: "Kitô giáo (bao gồm Công giáo và Tin Lành) là một trong những tôn giáo lớn tại Việt Nam...",
   },
   {
     id: 'cong-giao',
     name: 'CÔNG GIÁO',
     image: congGiaoImg,
+    description: "Công giáo Việt Nam là một bộ phận của Giáo hội Công giáo Hoàn vũ, dưới sự lãnh đạo tinh thần của Giáo hoàng...",
   }
 ];
 
 export default function TonGiao() {
+  const [selectedReligion, setSelectedReligion] = useState(null);
+
   useEffect(() => { document.body.classList.add("no-padding"); return () => { document.body.classList.remove("no-padding"); }; }, []);
 
+  // --- VIEW 2: DETAIL PAGE ---
+  if (selectedReligion) {
+    return (
+      <div className="min-h-screen bg-white font-sans text-gray-800 pb-10"
+        style={{
+          backgroundImage: `url(${infoBottom})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          fontFamily: "'Candara', 'Optima', 'Verdana', 'Tahoma', sans-serif",
+          color: '#410101'
+        }}
+      >
+        {/* Header Banner */}
+        <div className="relative h-84 bg-[#b34026] flex flex-col items-center justify-center text-white"
+          style={{
+            backgroundImage: `url(${infoTop})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          <button
+            onClick={() => setSelectedReligion(null)}
+            className="absolute bottom-4 left-4 bg-white/20 hover:bg-white/40 px-4 py-1 rounded-md text-sm cursor-pointer z-50 pointer-events-auto"
+            style={{
+              padding: `5px 15px`,
+              border: '1px solid white'
+            }}
+          >
+            ← Quay lại
+          </button>
+
+          {/* Title instead of specific header image if unavailable */}
+          <h1 className="text-4xl md:text-5xl font-bold tracking-widest uppercase mb-4 drop-shadow-md" 
+              style={{ fontFamily: 'var(--font-sans)', textShadow: '0 2px 4px rgba(224, 228, 25, 0.3)', color: '#e6b432' }}>
+            {selectedReligion.name}
+          </h1>
+
+          {/* Circular Placeholder for Illustration */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-40 h-40 rounded-full z-30 bg-gray-200">
+            {/* Background Image */}
+            <img
+              src={infoAvaBG}
+              alt="Background"
+              className="absolute inset-0 w-full h-full object-cover rounded-full scale-150"
+            />
+            {/* Foreground Avatar */}
+            <img
+              src={selectedReligion.image}
+              alt="Avatar"
+              className="absolute inset-0 w-full h-full object-contain z-40 transform scale-125 rounded-full p-2"
+            />
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className='dantoc-container relative z-10'>
+          <div className="max-w-5xl mx-auto px-6 mt-24 text-center"
+            style={{
+              paddingTop: '150px'
+            }}
+          >
+            <p className="mb-8 text-justify leading-loose text-lg">
+               {selectedReligion.description || `Thông tin chi tiết về ${selectedReligion.name} đang được cập nhật. Nội dung sẽ bao gồm lịch sử hình thành, đặc điểm nổi bật, và những đóng góp của tôn giáo này đối với văn hóa và đời sống xã hội.`}
+            </p>
+            
+            <p className="mb-8 text-justify leading-loose text-lg">
+                Đây là mô tả chi tiết hơn về các hoạt động, nghi lễ và ý nghĩa của {selectedReligion.name} trong đời sống tinh thần của tín đồ. Sự hiện diện của tôn giáo này đã làm phong phú thêm bức tranh văn hóa đa dạng của cộng đồng.
+            </p>
+
+            {/* Photo Gallery Grid Placeholder */}
+            {/* Since we don't have specific highlight images yet, we can hide this or show placeholders */}
+            <div className="flex flex-wrap gap-4 justify-center my-12">
+                <div className="w-full md:w-1/3 aspect-video bg-gray-200 rounded flex items-center justify-center text-gray-400">
+                    Ảnh minh họa 1
+                </div>
+                <div className="w-full md:w-1/3 aspect-video bg-gray-200 rounded flex items-center justify-center text-gray-400">
+                    Ảnh minh họa 2
+                </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- VIEW 1: SELECTION GRID (Main Page) ---
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden font-sans ">
 
@@ -91,6 +188,7 @@ export default function TonGiao() {
             <div
               key={item.id}
               className="group relative flex flex-col items-center cursor-pointer transition-transform duration-300 hover:-translate-y-4"
+              onClick={() => setSelectedReligion(item)}
             >
               {/* The "Shield/Cloud" Shape Container */}
 
@@ -105,7 +203,7 @@ export default function TonGiao() {
 
                 {/* Character Image Placeholder */}
                 <div className="absolute inset-0 flex items-center justify-center mt-12">
-                  <img src={item.image} />
+                  <img src={item.image} alt={item.name} />
                 </div>
 
               </div>
