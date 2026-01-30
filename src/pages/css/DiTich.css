@@ -1,0 +1,449 @@
+/* DiTich.css - Relics Page Styles */
+
+/* ===== FONT FACES ===== */
+@font-face {
+    font-family: 'UTM Copperplate';
+    src: url('../assets/fonts/UTM Copperplate.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UTM Copperplate';
+    src: url('../assets/fonts/UTM CopperplateB.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('../assets/fonts/UTM Avo.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('../assets/fonts/UTM AvoBold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('../assets/fonts/UTM AvoItalic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('../assets/fonts/UTM AvoBold_Italic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'SVN-Square';
+    src: url('../assets/fonts/SVN-Square.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* ===== HERO SECTION ===== */
+.ditich-page {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Override any container padding from parent */
+.ditich-page,
+.ditich-page * {
+    box-sizing: border-box;
+}
+
+.ditich-hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 600px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #1A6B5C;
+    padding: 40px 0 80px 0;
+    overflow: hidden;
+}
+
+.ditich-hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    height: 100%;
+}
+
+.ditich-hero-left {
+    flex: 0 0 400px;
+    margin-left: 120px;
+}
+
+.ditich-title {
+    font-family: 'UTM Copperplate', 'Copperplate Gothic Bold', serif;
+    font-weight: 700;
+    font-size: 72px;
+    line-height: 120%;
+    letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #FFFB8B 0%, #FEEDCF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 32px;
+}
+
+.ditich-subtitle {
+    font-family: 'UTM Avo', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 150%;
+    color: #FFFFF8;
+    max-width: 400px;
+}
+
+/* ===== CAROUSEL SECTION ===== */
+.ditich-carousel-container {
+    flex: none;
+    max-width: none;
+    width: 70%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ditich-carousel-scroll {
+    width: 100%;
+    height: 100%;
+    padding: 40px 30px;
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ditich-carousel-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.ditich-carousel-track {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px 0 20px 30px;
+    margin-left: 80px;
+}
+
+.ditich-carousel-card {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease, z-index 0s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.ditich-carousel-card:hover {
+    z-index: 10;
+    transform: scale(1.05);
+}
+
+.ditich-card-frame {
+    border: 6px solid #E86A33;
+    border-radius: 4px;
+    padding: 0;
+    background: #E86A33;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ditich-card-title-bar {
+    background: linear-gradient(180deg, #FFF9E6 0%, #FEEDCF 100%);
+    padding: 10px 16px;
+    text-align: center;
+    width: 100%;
+}
+
+.ditich-card-title-bar.top {
+    order: -1;
+}
+
+.ditich-card-title-bar.bottom {
+    order: 1;
+}
+
+.ditich-card-title {
+    font-family: 'SVN-Square', 'Arial', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: -0.04em;
+    color: #936416;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ditich-card-image {
+    width: clamp(120px, 12vw, 270px);
+    height: clamp(150px, 16vw, 380px);
+    overflow: hidden;
+    border-radius: 2px;
+}
+
+.ditich-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-color: #d4a574;
+}
+
+/* Carousel Dots - Hidden */
+.ditich-carousel-dots {
+    display: none;
+}
+
+/* Hero Wave Decoration */
+.ditich-hero-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: linear-gradient(to top, #FFFFFF 0%, transparent 100%);
+}
+
+/* ===== MAIN CONTENT SECTION ===== */
+.ditich-main-content {
+    background-color: #FFFFFF;
+    padding: 80px 20px;
+    min-height: 600px;
+}
+
+.ditich-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 30px;
+    max-width: 1800px;
+    margin: 0 auto 60px;
+}
+
+.ditich-grid-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    text-decoration: none;
+}
+
+.ditich-grid-card:hover {
+    transform: translateY(-8px);
+}
+
+.ditich-grid-image {
+    width: 100%;
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border: 1px solid rgba(26, 107, 92, 0.1);
+}
+
+.ditich-grid-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-color: #e8e0d0;
+    transition: transform 0.3s ease;
+}
+
+.ditich-grid-card:hover .ditich-grid-image img {
+    transform: scale(1.05);
+}
+
+.ditich-grid-title {
+    font-family: 'SVN-Square', 'Arial', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
+    color: #1A6B5C;
+    text-transform: uppercase;
+    margin-top: 16px;
+}
+
+/* ===== PAGINATION ===== */
+.ditich-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 40px;
+    border-top: 1px solid rgba(26, 107, 92, 0.1);
+}
+
+.ditich-pagination-left,
+.ditich-pagination-center,
+.ditich-pagination-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+
+.ditich-goto-label {
+    font-family: 'UTM Avo', sans-serif;
+    font-size: 18px;
+    color: #666;
+}
+
+.ditich-goto-input {
+    width: 60px;
+    padding: 8px 12px;
+    border: 1px solid #d4cfc0;
+    border-radius: 6px;
+    font-family: 'UTM Avo', sans-serif;
+    font-size: 18px;
+    text-align: center;
+    outline: none;
+}
+
+.ditich-goto-input:focus {
+    border-color: #1A6B5C;
+}
+
+.ditich-page-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    font-family: 'UTM Avo', sans-serif;
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ditich-page-btn:hover:not(:disabled) {
+    background-color: rgba(26, 107, 92, 0.1);
+    color: #1A6B5C;
+}
+
+.ditich-page-btn.active {
+    background-color: #1A6B5C;
+    color: white;
+}
+
+.ditich-page-btn.nav {
+    color: #1A6B5C;
+    font-weight: 600;
+}
+
+.ditich-page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ===== FOOTER DECORATION ===== */
+.ditich-footer-decoration {
+    background-color: #FFF9E6;
+    padding: 0;
+    overflow: hidden;
+}
+
+.ditich-footer-image {
+    width: 100%;
+    max-height: 300px;
+    overflow: hidden;
+}
+
+.ditich-footer-image img {
+    width: 100%;
+    object-fit: cover;
+    object-position: top center;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+    .ditich-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .ditich-hero-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .ditich-hero-left {
+        text-align: center;
+        padding-top: 20px;
+    }
+    
+    .ditich-subtitle {
+        max-width: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .ditich-hero {
+        padding: 30px 20px 60px;
+    }
+    
+    .ditich-title {
+        font-size: 36px;
+    }
+    
+    .ditich-subtitle {
+        font-size: 18px;
+    }
+    
+    .ditich-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .ditich-main-content {
+        padding: 40px 20px;
+    }
+    
+    .ditich-pagination {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
