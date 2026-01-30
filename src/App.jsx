@@ -3,6 +3,7 @@ import MainLayout from './layouts/MainLayout';
 import VanHoa from './pages/VanHoa';
 import ChinhSach from './pages/ChinhSach';
 import Admin from './pages/Admin';
+import EditorDemo from './pages/EditorDemo';
 
 import DanToc from './pages/DanToc';
 import TonGiao from './pages/TonGiao';
@@ -15,6 +16,9 @@ function App() {
             <Routes>
                 {/* Admin route - no layout wrapper */}
                 <Route path="/admin" element={<Admin />} />
+                
+                {/* Editor Demo - Novel.sh prototype */}
+                <Route path="/editor-demo" element={<EditorDemo />} />
                 
                 {/* Public routes with MainLayout */}
                 <Route path="/" element={<MainLayout />}>

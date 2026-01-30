@@ -5,9 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
-import { NewsModule } from './news/news.module';
-import { EventsModule } from './events/events.module';
-import { PoliciesModule } from './policies/policies.module';
+import { ContentModule } from './content/content.module';
 import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
@@ -18,9 +16,7 @@ import { UploadsModule } from './uploads/uploads.module';
     }),
     PrismaModule,
     AuthModule,
-    NewsModule,
-    EventsModule,
-    PoliciesModule,
+    ContentModule,
     UploadsModule,
   ],
   controllers: [AppController],
