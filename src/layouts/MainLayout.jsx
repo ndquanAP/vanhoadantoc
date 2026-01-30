@@ -1,5 +1,4 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import footerBg from '../assets/imagesAssets/backgroundfooter.png';
 
 const navItems = [
     { path: '/dan-toc', label: 'Dân Tộc' },
@@ -36,17 +35,40 @@ export default function MainLayout() {
                 <Outlet />
             </main>
 
-            {/* Footer */}
-            <footer className="footer relative p-0 mt-12 w-full" style={{ padding: '0' }} >
-                <img
-                    src={footerBg}
-                    alt="Footer Background"
-                    className="w-full h-auto block"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
+            {/* Footer - Vietnamese Ink-Wash Landscape */}
+            <footer className="footer">
+                {/* Decorative Mountain Layers */}
+                <div className="footer-mountains">
+                    <div className="footer-mist"></div>
+                    <div className="footer-wheat-band"></div>
+                    <div className="footer-mountain-layer-3"></div>
+                    <div className="footer-mountain-layer-2"></div>
+                    <div className="footer-mountain-layer-1"></div>
+                </div>
+
+                {/* Footer Content */}
+                <div className="footer-content-section">
                     <div className="container">
-                        <div className="footer-content">
-                            {/* <p className="text-white">© 2025 Văn Hoá Dân Tộc Việt Nam. Tất cả quyền được bảo lưu.</p> */}
+                        <div className="footer-inner">
+                            <span className="footer-brand">Văn Hoá Dân Tộc Việt Nam</span>
+                            
+                            <nav className="footer-nav">
+                                {navItems.map((item) => (
+                                    <NavLink
+                                        key={item.path}
+                                        to={item.path}
+                                        className="footer-nav-link"
+                                    >
+                                        {item.label}
+                                    </NavLink>
+                                ))}
+                            </nav>
+
+                            <hr className="footer-divider" />
+
+                            <p className="footer-copyright">
+                                © 2025 Văn Hoá Dân Tộc Việt Nam. Tất cả quyền được bảo lưu.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -54,3 +76,4 @@ export default function MainLayout() {
         </div>
     );
 }
+
