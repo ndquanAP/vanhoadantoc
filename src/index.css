@@ -168,6 +168,10 @@ body {
     padding-top: 112px;
 }
 
+body.no-padding {
+    padding-top: 0;
+}
+
 /* ===== Hero Slider ===== */
 .slider-container {
     display: flex;
@@ -811,10 +815,10 @@ body {
 
 /* ===== Footer ===== */
 .footer {
-    width: 100%;
-    margin-top: 3rem;
-    position: relative;
-    padding: 0;
+    background: var(--color-primary-dark);
+    color: #fff;
+    padding: 2rem 0;
+    /* margin-top: 3rem; */
 }
 
 .footer-content {
