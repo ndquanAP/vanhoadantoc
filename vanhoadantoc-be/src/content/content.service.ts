@@ -40,7 +40,10 @@ export class ContentService {
   async create(dto: CreateContentDto) {
     return this.prisma.content.create({
       data: {
+        title: dto.title,
         type: dto.type,
+        imgCover: dto.imgCover,
+        metadata: dto.metadata as Prisma.InputJsonValue,
         content: dto.content as Prisma.InputJsonValue,
       },
     });
@@ -48,7 +51,10 @@ export class ContentService {
 
   async update(id: number, dto: UpdateContentDto) {
     const data: Prisma.ContentUpdateInput = {};
+    if (dto.title !== undefined) data.title = dto.title;
     if (dto.type) data.type = dto.type;
+    if (dto.imgCover !== undefined) data.imgCover = dto.imgCover;
+    if (dto.metadata !== undefined) data.metadata = dto.metadata as Prisma.InputJsonValue;
     if (dto.content) data.content = dto.content as Prisma.InputJsonValue;
     
     return this.prisma.content.update({

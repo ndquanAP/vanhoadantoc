@@ -293,6 +293,97 @@
     margin-bottom: 0;
 }
 
+/* TipTap Heading Styles */
+
+/* H1 - Large centered title */
+.ditich-detail-text h1 {
+    font-family: 'UTM Copperplate', serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--heritage-teal);
+    text-align: center;
+    margin: 50px 0 30px;
+    position: relative;
+    padding-bottom: 16px;
+}
+
+.ditich-detail-text h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--heritage-gold) 0%, var(--frame-orange) 100%);
+    border-radius: 2px;
+}
+
+.ditich-detail-text h1:first-child {
+    margin-top: 0;
+}
+
+/* H2 - Section title with accent bar */
+.ditich-detail-text h2 {
+    font-family: 'UTM Copperplate', serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--heritage-teal);
+    margin: 40px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ditich-detail-text h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 28px;
+    background: linear-gradient(180deg, var(--heritage-gold) 0%, var(--frame-orange) 100%);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.ditich-detail-text h2:first-child {
+    margin-top: 0;
+}
+
+/* H3 - Smaller subsection header */
+.ditich-detail-text h3 {
+    font-family: 'UTM Avo', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--heritage-teal);
+    margin: 28px 0 14px;
+    padding-left: 16px;
+    border-left: 3px solid var(--heritage-gold);
+}
+
+.ditich-detail-text h3:first-child {
+    margin-top: 0;
+}
+
+/* TipTap list styles */
+.ditich-detail-text ul,
+.ditich-detail-text ol {
+    margin: 0 0 20px;
+    padding-left: 24px;
+}
+
+.ditich-detail-text li {
+    margin-bottom: 8px;
+}
+
+/* TipTap blockquote styles */
+.ditich-detail-text blockquote {
+    border-left: 4px solid var(--heritage-teal);
+    margin: 20px 0;
+    padding: 12px 20px;
+    background: rgba(0, 128, 128, 0.05);
+    font-style: italic;
+}
+
 /* ===== GALLERY SECTION ===== */
 .ditich-detail-gallery {
     background-color: var(--bg-white);

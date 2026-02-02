@@ -8,3 +8,207 @@
     width: 40vw;
 }
 
+/* ============================================
+   TipTap Content Renderer Styles
+   ============================================ */
+
+.tiptap-content {
+    font-family: 'Candara', 'Optima', 'Verdana', 'Tahoma', sans-serif;
+    color: #410101;
+    line-height: 1.7;
+    text-align: justify;
+}
+
+/* Headings */
+.tiptap-heading {
+    color: #A30C0C;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+    text-align: center;
+}
+
+.tiptap-h1 {
+    font-size: 1.75rem;
+}
+
+.tiptap-h2 {
+    font-size: 1.5rem;
+}
+
+.tiptap-h3 {
+    font-size: 1.25rem;
+}
+
+/* Paragraphs */
+.tiptap-paragraph {
+    margin-bottom: 1em;
+    text-align: justify;
+}
+
+/* Lists */
+.tiptap-bullet-list,
+.tiptap-ordered-list {
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+.tiptap-bullet-list {
+    list-style-type: disc;
+}
+
+.tiptap-ordered-list {
+    list-style-type: decimal;
+}
+
+.tiptap-list-item {
+    margin-bottom: 0.5em;
+}
+
+/* Blockquote */
+.tiptap-blockquote {
+    border-left: 4px solid #A30C0C;
+    padding-left: 1em;
+    margin: 1.5em 0;
+    font-style: italic;
+    color: #5a5248;
+    background-color: rgba(163, 12, 12, 0.05);
+    padding: 1em;
+    border-radius: 0 8px 8px 0;
+}
+
+/* Horizontal Rule */
+.tiptap-hr {
+    border: none;
+    border-top: 2px solid #A30C0C;
+    margin: 2em 0;
+    opacity: 0.3;
+}
+
+/* Link */
+.tiptap-link {
+    color: #A30C0C;
+    text-decoration: underline;
+}
+
+.tiptap-link:hover {
+    color: #7a0909;
+}
+
+/* ============================================
+   Image Styles
+   ============================================ */
+
+/* Single image */
+.tiptap-image-single {
+    margin: 1.5em 0;
+    display: flex;
+    justify-content: center;
+}
+
+.tiptap-image-single .tiptap-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Image Groups (consecutive images) */
+.tiptap-image-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 1.5em 0;
+}
+
+.tiptap-image-group .tiptap-image-item {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 200px;
+}
+
+.tiptap-image-group .tiptap-image-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 2 images side by side */
+.tiptap-image-group-2 .tiptap-image-item {
+    flex: 1 1 calc(50% - 4px);
+}
+
+/* 3 images - 2 on top, 1 below */
+.tiptap-image-group-3 .tiptap-image-item:nth-child(1),
+.tiptap-image-group-3 .tiptap-image-item:nth-child(2) {
+    flex: 1 1 calc(50% - 4px);
+}
+
+.tiptap-image-group-3 .tiptap-image-item:nth-child(3) {
+    flex: 1 1 100%;
+}
+
+.tiptap-image-group-3 .tiptap-image-item:nth-child(3) img {
+    height: 280px;
+}
+
+/* 4+ images - grid of 2 columns */
+.tiptap-image-group-4 .tiptap-image-item {
+    flex: 1 1 calc(50% - 4px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .tiptap-image-group .tiptap-image-item {
+        flex: 1 1 100%;
+        min-width: unset;
+    }
+
+    .tiptap-image-group .tiptap-image-item img {
+        height: 180px;
+    }
+
+    .tiptap-h1 {
+        font-size: 1.5rem;
+    }
+
+    .tiptap-h2 {
+        font-size: 1.25rem;
+    }
+
+    .tiptap-h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Loading state */
+.dantoc-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 1rem;
+}
+
+.dantoc-loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #e5c85c;
+    border-top-color: #1a5d3a;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.dantoc-loading-text {
+    color: #1a5d3a;
+    font-size: 1.1rem;
+}
+

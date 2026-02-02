@@ -190,7 +190,9 @@
     background: linear-gradient(180deg, #FFF9E6 0%, #FEEDCF 100%);
     padding: 10px 16px;
     text-align: center;
-    width: 100%;
+    width: clamp(120px, 12vw, 270px);
+    max-width: clamp(120px, 12vw, 270px);
+    overflow: hidden;
 }
 
 .ditich-card-title-bar.top {
@@ -209,7 +211,10 @@
     letter-spacing: -0.04em;
     color: #936416;
     text-transform: uppercase;
+    display: block;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ditich-card-image {

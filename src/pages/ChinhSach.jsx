@@ -1,64 +1,111 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import tempImg from '../assets/imagesAssets/thumb_660_34aa3113-a4a7-4b55-a0d9-9d7e619dc457.jpg';
 
-// Mock data for policy categories
+const API_URL = 'http://localhost:3001/api';
+
+// Policy category options
 const categories = [
-    { id: 'chinh-sach', label: 'CHÍNH SÁCH', count: 24 },
-    { id: 'bao-ton-di-san', label: 'BẢO TỒN DI SẢN', count: 18 },
-    { id: 'ho-tro-dan-toc', label: 'HỖ TRỢ DÂN TỘC THIỂU SỐ', count: 12 },
+    { id: 'all', label: 'TẤT CẢ CHÍNH SÁCH' },
+    { id: 'bao-ton-di-san', label: 'BẢO TỒN DI SẢN' },
+    { id: 'ho-tro-dan-toc', label: 'HỖ TRỢ DÂN TỘC THIỂU SỐ' },
 ];
 
-// Mock data for policy articles
-const policyArticles = [
-    {
-        id: 1,
-        date: '16/12/2025',
-        isNew: true,
-        title: 'Chính sách hỗ trợ bảo tồn và phát huy giá trị di tích và di sản văn hóa phi vật thể',
-        excerpt: 'Ngày 12/12/2025, tại vòng chung kết cuộc thi Food Innovation and Development 2225 (FID 2025) diễn ra ở Trường Đại học Công Thương TP. Hồ Chí Minh (HUIT)...',
-    },
-    {
-        id: 2,
-        date: '16/12/2025',
-        isNew: true,
-        title: 'Chính sách hỗ trợ bảo tồn và phát huy giá trị di tích và di sản văn hóa phi vật thể',
-        excerpt: 'Ngày 12/12/2025, tại vòng chung kết cuộc thi Food Innovation and Development 2225 (FID 2025) diễn ra ở Trường Đại học Công Thương TP. Hồ Chí Minh (HUIT)...',
-    },
-    {
-        id: 3,
-        date: '16/12/2025',
-        isNew: false,
-        title: 'Chính sách hỗ trợ bảo tồn và phát huy giá trị di tích và di sản văn hóa phi vật thể',
-        excerpt: 'Ngày 12/12/2025, tại vòng chung kết cuộc thi Food Innovation and Development 2225 (FID 2025) diễn ra ở Trường Đại học Công Thương TP. Hồ Chí Minh (HUIT)...',
-    },
-    {
-        id: 4,
-        date: '16/12/2025',
-        isNew: false,
-        title: 'Chính sách hỗ trợ bảo tồn và phát huy giá trị di tích và di sản văn hóa phi vật thể',
-        excerpt: 'Ngày 12/12/2025, tại vòng chung kết cuộc thi Food Innovation and Development 2225 (FID 2025) diễn ra ở Trường Đại học Công Thương TP. Hồ Chí Minh (HUIT)...',
-    },
-    {
-        id: 5,
-        date: '16/12/2025',
-        isNew: false,
-        title: 'Chính sách hỗ trợ bảo tồn và phát huy giá trị di tích và di sản văn hóa phi vật thể',
-        excerpt: 'Ngày 12/12/2025, tại vòng chung kết cuộc thi Food Innovation and Development 2225 (FID 2025) diễn ra ở Trường Đại học Công Thương TP. Hồ Chí Minh (HUIT)...',
-    },
-    {
-        id: 6,
-        date: '16/12/2025',
-        isNew: false,
-        title: 'Chính sách hỗ trợ bảo tồn và phát huy giá trị di tích và di sản văn hóa phi vật thể',
-        excerpt: 'Ngày 12/12/2025, tại vòng chung kết cuộc thi Food Innovation and Development 2225 (FID 2025) diễn ra ở Trường Đại học Công Thương TP. Hồ Chí Minh (HUIT)...',
-    },
-];
+// Helper function to format date
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
 
-import { useState } from 'react';
+// Helper function to extract first image from TipTap content
+function getFirstImageFromContent(content) {
+    if (!content || !content.content) return null;
+    for (const node of content.content) {
+        if (node.type === 'image' && node.attrs?.src) {
+            return node.attrs.src;
+        }
+    }
+    return null;
+}
+
+// Helper function to extract text excerpt from TipTap content
+function getExcerptFromContent(content, maxLength = 150) {
+    if (!content || !content.content) return '';
+    let text = '';
+    for (const node of content.content) {
+        if (node.type === 'paragraph' && node.content) {
+            for (const child of node.content) {
+                if (child.type === 'text') {
+                    text += child.text + ' ';
+                }
+            }
+        }
+        if (text.length > maxLength) break;
+    }
+    return text.trim().substring(0, maxLength) + (text.length > maxLength ? '...' : '');
+}
+
+// Check if article is new (within last 7 days)
+function isNewArticle(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffDays = (now - date) / (1000 * 60 * 60 * 24);
+    return diffDays <= 7;
+}
 
 export default function ChinhSach() {
-    const [activeCategory, setActiveCategory] = useState('chinh-sach');
+    const [activeCategory, setActiveCategory] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = 4;
+    const [policies, setPolicies] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const itemsPerPage = 6;
+
+    // Fetch policies from API
+    useEffect(() => {
+        fetch(`${API_URL}/content?type=policy&limit=100`)
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch policies');
+                return res.json();
+            })
+            .then(data => {
+                setPolicies(data.items || []);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error('Error fetching policies:', err);
+                setError(err.message);
+                setLoading(false);
+            });
+    }, []);
+
+    // Filter policies by category and search term
+    const filteredPolicies = policies.filter(policy => {
+        const matchesCategory = activeCategory === 'all' || 
+            policy.metadata?.category === activeCategory;
+        const matchesSearch = !searchTerm || 
+            policy.title?.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
+
+    // Pagination
+    const totalPages = Math.ceil(filteredPolicies.length / itemsPerPage);
+    const paginatedPolicies = filteredPolicies.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    // Reset to page 1 when filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeCategory, searchTerm]);
+
+    // Get category counts
+    const getCategoryCount = (categoryId) => {
+        if (categoryId === 'all') return policies.length;
+        return policies.filter(p => p.metadata?.category === categoryId).length;
+    };
 
     return (
         <div className="container">
@@ -71,7 +118,13 @@ export default function ChinhSach() {
                             <circle cx="11" cy="11" r="8" />
                             <path d="m21 21-4.35-4.35" />
                         </svg>
-                        <input type="text" placeholder="Tìm kiếm..." className="policy-search-input" />
+                        <input 
+                            type="text" 
+                            placeholder="Tìm kiếm..." 
+                            className="policy-search-input"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                     </div>
 
                     {/* Category Tabs */}
@@ -83,6 +136,7 @@ export default function ChinhSach() {
                                 onClick={() => setActiveCategory(cat.id)}
                             >
                                 {cat.label}
+                                <span className="policy-tab-count">({getCategoryCount(cat.id)})</span>
                             </button>
                         ))}
                     </nav>
@@ -102,65 +156,82 @@ export default function ChinhSach() {
                             </svg>
                         </div>
                         <div>
-                            <h1 className="policy-title">CHÍNH SÁCH BẢO TỒN DI SẢN</h1>
+                            <h1 className="policy-title">
+                                {activeCategory === 'all' ? 'CHÍNH SÁCH' : 
+                                 activeCategory === 'bao-ton-di-san' ? 'BẢO TỒN DI SẢN' : 
+                                 'HỖ TRỢ DÂN TỘC THIỂU SỐ'}
+                            </h1>
                             <p className="policy-subtitle">Cập nhật thông tin mới nhất.</p>
                         </div>
                     </div>
 
                     {/* Article List */}
                     <div className="policy-articles">
-                        {policyArticles.map((article) => (
-                            <a href={`/chinh-sach/${article.id}`} key={article.id} className="policy-article">
-                                <div className="policy-article-image">
-                                    <img src={tempImg} alt={article.title} />
-                                </div>
-                                <div className="policy-article-content">
-                                    <div className="policy-article-meta">
-                                        <span className="policy-article-date">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                                <line x1="16" y1="2" x2="16" y2="6" />
-                                                <line x1="8" y1="2" x2="8" y2="6" />
-                                                <line x1="3" y1="10" x2="21" y2="10" />
-                                            </svg>
-                                            {article.date}
-                                        </span>
-                                        {article.isNew && <span className="policy-article-new">New</span>}
+                        {loading ? (
+                            <div className="loading-message">Đang tải chính sách...</div>
+                        ) : error ? (
+                            <div className="error-message">Lỗi: {error}</div>
+                        ) : paginatedPolicies.length === 0 ? (
+                            <div className="empty-message">Không tìm thấy chính sách nào</div>
+                        ) : (
+                            paginatedPolicies.map((article) => (
+                                <Link to={`/chinh-sach/${article.id}`} key={article.id} className="policy-article">
+                                    <div className="policy-article-image">
+                                        <img 
+                                            src={article.imgCover || getFirstImageFromContent(article.content) || tempImg} 
+                                            alt={article.title} 
+                                        />
                                     </div>
-                                    <h3 className="policy-article-title">{article.title}</h3>
-                                    <p className="policy-article-excerpt">{article.excerpt}</p>
-                                </div>
-                            </a>
-                        ))}
+                                    <div className="policy-article-content">
+                                        <div className="policy-article-meta">
+                                            <span className="policy-article-date">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                    <line x1="16" y1="2" x2="16" y2="6" />
+                                                    <line x1="8" y1="2" x2="8" y2="6" />
+                                                    <line x1="3" y1="10" x2="21" y2="10" />
+                                                </svg>
+                                                {formatDate(article.createdAt)}
+                                            </span>
+                                            {isNewArticle(article.createdAt) && <span className="policy-article-new">New</span>}
+                                        </div>
+                                        <h3 className="policy-article-title">{article.title}</h3>
+                                        <p className="policy-article-excerpt">{getExcerptFromContent(article.content)}</p>
+                                    </div>
+                                </Link>
+                            ))
+                        )}
                     </div>
 
                     {/* Pagination */}
-                    <div className="policy-pagination">
-                        <button 
-                            className="policy-page-btn" 
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        >
-                            &lt;
-                        </button>
-                        {[1, 2, 3, 4].map((page) => (
-                            <button
-                                key={page}
-                                className={`policy-page-btn ${currentPage === page ? 'active' : ''}`}
-                                onClick={() => setCurrentPage(page)}
+                    {totalPages > 1 && (
+                        <div className="policy-pagination">
+                            <button 
+                                className="policy-page-btn" 
+                                disabled={currentPage === 1}
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             >
-                                {page}
+                                &lt;
                             </button>
-                        ))}
-                        <span className="policy-page-dots">...</span>
-                        <button 
-                            className="policy-page-btn"
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                        >
-                            &gt;
-                        </button>
-                    </div>
+                            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
+                                <button
+                                    key={page}
+                                    className={`policy-page-btn ${currentPage === page ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage(page)}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                            {totalPages > 5 && <span className="policy-page-dots">...</span>}
+                            <button 
+                                className="policy-page-btn"
+                                disabled={currentPage === totalPages}
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            >
+                                &gt;
+                            </button>
+                        </div>
+                    )}
                 </main>
             </div>
         </div>

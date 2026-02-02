@@ -22,7 +22,10 @@ model User {
 
 model Content {
   id        Int      @id @default(autoincrement())
+  title     String?  // Nullable for existing records
   type      String   // 'news' | 'event' | 'policy' | 'ethnic' | 'religious' | 'location' | 'site'
+  imgCover  String?  // Cover image URL from /api/uploads
+  metadata  Json?    // Type-specific data: { category, location } for site
   content   Json     // TipTap JSON (includes text, images, formatting)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

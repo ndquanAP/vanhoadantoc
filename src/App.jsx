@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import VanHoa from './pages/VanHoa';
 import ChinhSach from './pages/ChinhSach';
+import ContentDetail from './pages/ContentDetail';
 import Admin from './pages/Admin';
 import EditorDemo from './pages/EditorDemo';
 
@@ -28,7 +29,10 @@ function App() {
                     <Route path="di-tich" element={<DiTich />} />
                     <Route path="di-tich/:id" element={<DiTichDetail />} />
                     <Route path="van-hoa" element={<VanHoa />} />
+                    <Route path="van-hoa/tin-tuc/:id" element={<ContentDetail />} />
+                    <Route path="van-hoa/su-kien/:id" element={<ContentDetail />} />
                     <Route path="chinh-sach" element={<ChinhSach />} />
+                    <Route path="chinh-sach/:id" element={<ContentDetail />} />
                 </Route>
             </Routes>
         </BrowserRouter>

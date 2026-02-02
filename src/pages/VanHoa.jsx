@@ -1,100 +1,89 @@
-import { useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation, Autoplay } from 'swiper/modules';
+import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import 'swiper/css/navigation';
 
 import frameImg from '../assets/imagesAssets/khungslide.png';
 import arrowImg from '../assets/imagesAssets/nextbackbtn.png';
 import tempImg from '../assets/imagesAssets/thumb_660_34aa3113-a4a7-4b55-a0d9-9d7e619dc457.jpg';
 
-// Mock data for the hero slider
-const heroSlides = [
-    {
-        id: 1,
-        image: '/images/festival-banner.jpg',
-        title: 'Hùng Đồng Khai Hội',
-        date: '28-29/05/2022',
-        location: 'Huyện Đồng Văn, Hà Giang',
-        sponsors: ['Huế', 'Mobifone', 'Fisher', 'Coca-Cola', 'Viettel'],
-    },
-    {
-        id: 2,
-        image: '/images/culture-event.jpg',
-        title: 'Lễ Hội Văn Hóa Dân Tộc',
-        date: '15-20/06/2025',
-        location: 'Thái Nguyên',
-    },
-];
+const API_URL = 'http://localhost:3001/api';
 
-// Mock data for news items (TIN TỨC)
-const newsItems = [
-    {
-        id: 1,
-        date: '16/12/2025',
-        title: 'Lễ hội văn hoá dân tộc tỉnh Thái Nguyên chính thức khai mạc',
-        excerpt: 'Ngày 05/12/2025, bộ Văn hoá Thể Thao và du lịch tỉnh Thái Nguyên đã tham dự chương trình giới thiệu Nền tảng xuất khẩu khác trực tuyến Golive Vietnam, và Cục Thương mại điện tử...',
-        image: '/images/news-1.jpg',
-    },
-    {
-        id: 2,
-        date: '16/12/2025',
-        title: 'Recap Sự kiện: Sắc màu thổ cẩm',
-        excerpt: 'Ngày 05/12/2025, bộ Văn hoá Thể Thao và du lịch tỉnh Thái Nguyên đã tham dự chương trình giới thiệu Nền tảng xuất khẩu khác trực tuyến Golive Vietnam...',
-        image: '/images/news-2.jpg',
-    },
-    {
-        id: 3,
-        date: '16/12/2025',
-        title: 'Recap Sự kiện: Sắc màu thổ cẩm',
-        excerpt: 'Ngày 05/12/2025, bộ Văn hoá Thể Thao và du lịch tỉnh Thái Nguyên đã tham dự chương trình giới thiệu Nền tảng xuất khẩu khác trực tuyến...',
-        image: '/images/news-3.jpg',
-    },
-    {
-        id: 4,
-        date: '16/12/2025',
-        title: 'Recap Sự kiện: Sắc màu thổ cẩm',
-        excerpt: 'Ngày 05/12/2025, bộ Văn hoá Thể Thao và du lịch tỉnh Thái Nguyên đã tham dự chương trình giới thiệu Nền tảng xuất khẩu...',
-        image: '/images/news-4.jpg',
-    },
-];
+// Helper function to format date
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
 
-// Mock data for events (SỰ KIỆN)
-const events = [
-    {
-        id: 1,
-        date: '09/12/2025',
-        title: 'Lễ hội "Cung đường văn hoá"',
-        description: 'Lễ giải cho Hộ Kinh doanh và LG trinh lớn doanh nghiệp',
-        tag: 'Văn hoá',
-        image: '/images/event-1.jpg',
-    },
-    {
-        id: 2,
-        date: '24/11/2025',
-        title: 'Lễ hội "Cung đường văn hoá"',
-        tag: 'Thông báo',
-        image: '/images/event-2.jpg',
-    },
-    {
-        id: 3,
-        date: '24/11/2025',
-        title: 'Lễ hội "Cung đường văn hoá"',
-        tag: 'Thông báo',
-        image: '/images/event-3.jpg',
-    },
-    {
-        id: 4,
-        date: '24/11/2025',
-        title: 'Lễ hội "Cung đường văn hoá"',
-        tag: 'Thông báo',
-        image: '/images/event-4.jpg',
-    },
-];
+// Helper function to extract first image from TipTap content
+function getFirstImageFromContent(content) {
+    if (!content || !content.content) return null;
+    for (const node of content.content) {
+        if (node.type === 'image' && node.attrs?.src) {
+            return node.attrs.src;
+        }
+    }
+    return null;
+}
+
+// Helper function to extract text excerpt from TipTap content
+function getExcerptFromContent(content, maxLength = 150) {
+    if (!content || !content.content) return '';
+    let text = '';
+    for (const node of content.content) {
+        if (node.type === 'paragraph' && node.content) {
+            for (const child of node.content) {
+                if (child.type === 'text') {
+                    text += child.text + ' ';
+                }
+            }
+        }
+        if (text.length > maxLength) break;
+    }
+    return text.trim().substring(0, maxLength) + (text.length > maxLength ? '...' : '');
+}
 
 export default function VanHoa() {
     const swiperRef = useRef(null);
+    const [newsItems, setNewsItems] = useState([]);
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetch news and events from API
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [newsRes, eventsRes] = await Promise.all([
+                    fetch(`${API_URL}/content?type=news&limit=10`),
+                    fetch(`${API_URL}/content?type=event&limit=10`)
+                ]);
+
+                if (!newsRes.ok || !eventsRes.ok) {
+                    throw new Error('Failed to fetch content');
+                }
+
+                const newsData = await newsRes.json();
+                const eventsData = await eventsRes.json();
+
+                setNewsItems(newsData.items || []);
+                setEvents(eventsData.items || []);
+                setLoading(false);
+            } catch (err) {
+                console.error('Error fetching content:', err);
+                setError(err.message);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // Use first 3 events for hero slider
+    const heroSlides = events.slice(0, 3);
+
     return (
         <div className="container">
             {/* Hero Slider Section with Custom Navigation & Frame */}
@@ -110,7 +99,6 @@ export default function VanHoa() {
                     </button>
 
                     {/* Slider Frame Wrapper (Flex 10) */}
-                    {/* Slider Frame Wrapper (Flex 10) */}
                     <div className="slider-frame relative w-full">
                         {/* Swiper Content (Z-5) */}
                         <div className="slider-content-wrapper">
@@ -123,20 +111,33 @@ export default function VanHoa() {
                                 slidesPerView={1}
                                 pagination={{ clickable: true }}
                                 autoplay={{ delay: 5000, disableOnInteraction: false }}
-                                loop
+                                loop={heroSlides.length > 1}
                                 className="h-full w-full"
                             >
-                                {heroSlides.map((slide) => (
+                                {heroSlides.length > 0 ? heroSlides.map((slide) => (
                                     <SwiperSlide key={slide.id}>
-                                        <div className="hero-slide h-full">
-                                            <img src={tempImg} alt={slide.title} className="w-full h-full object-cover" />
+                                        <Link to={`/van-hoa/su-kien/${slide.id}`} className="hero-slide h-full block">
+                                            <img 
+                                                src={slide.imgCover || getFirstImageFromContent(slide.content) || tempImg} 
+                                                alt={slide.title} 
+                                                className="w-full h-full object-cover" 
+                                            />
                                             <div className="hero-overlay">
                                                 <h2 className="hero-title">{slide.title}</h2>
-                                                <p className="hero-subtitle">{slide.date}</p>
+                                                <p className="hero-subtitle">{formatDate(slide.createdAt)}</p>
+                                            </div>
+                                        </Link>
+                                    </SwiperSlide>
+                                )) : (
+                                    <SwiperSlide>
+                                        <div className="hero-slide h-full">
+                                            <img src={tempImg} alt="Loading" className="w-full h-full object-cover" />
+                                            <div className="hero-overlay">
+                                                <h2 className="hero-title">{loading ? 'Đang tải...' : 'Chưa có sự kiện'}</h2>
                                             </div>
                                         </div>
                                     </SwiperSlide>
-                                ))}
+                                )}
                             </Swiper>
                         </div>
 
@@ -165,45 +166,67 @@ export default function VanHoa() {
                 <section className="main-content">
                     <div className="section-header">
                         <h2 className="section-title">Tin Tức</h2>
-                        <a href="/van-hoa/tin-tuc" className="section-see-all">Xem tất cả</a>
+                        <Link to="/van-hoa/tin-tuc" className="section-see-all">Xem tất cả</Link>
                     </div>
 
-                    {newsItems.map((item) => (
-                        <a href={`/van-hoa/tin-tuc/${item.id}`} key={item.id} className="news-card">
-                            <div className="news-card-image">
-                                <img src={tempImg} alt={item.title} />
-                            </div>
-                            <div className="news-card-content">
-                                <span className="news-card-date">
-                                    {item.date}
-                                </span>
-                                <h3 className="news-card-title">{item.title}</h3>
-                                <p className="news-card-excerpt">{item.excerpt}</p>
-                                <span className="news-card-readmore">Đọc thêm</span>
-                            </div>
-                        </a>
-                    ))}
+                    {loading ? (
+                        <div className="loading-message">Đang tải tin tức...</div>
+                    ) : error ? (
+                        <div className="error-message">Lỗi: {error}</div>
+                    ) : newsItems.length === 0 ? (
+                        <div className="empty-message">Chưa có tin tức</div>
+                    ) : (
+                        newsItems.map((item) => (
+                            <Link to={`/van-hoa/tin-tuc/${item.id}`} key={item.id} className="news-card">
+                                <div className="news-card-image">
+                                    <img 
+                                        src={item.imgCover || getFirstImageFromContent(item.content) || tempImg} 
+                                        alt={item.title} 
+                                    />
+                                </div>
+                                <div className="news-card-content">
+                                    <span className="news-card-date">
+                                        {formatDate(item.createdAt)}
+                                    </span>
+                                    <h3 className="news-card-title">{item.title}</h3>
+                                    <p className="news-card-excerpt">{getExcerptFromContent(item.content)}</p>
+                                    <span className="news-card-readmore">Đọc thêm</span>
+                                </div>
+                            </Link>
+                        ))
+                    )}
                 </section>
 
                 {/* Sidebar - SỰ KIỆN */}
                 <aside className="sidebar">
                     <div className="section-header">
                         <h2 className="section-title">Sự Kiện</h2>
-                        <a href="/van-hoa/su-kien" className="section-see-all">Xem tất cả</a>
+                        <Link to="/van-hoa/su-kien" className="section-see-all">Xem tất cả</Link>
                     </div>
 
-                    {events.map((event) => (
-                        <a href={`/van-hoa/su-kien/${event.id}`} key={event.id} className="event-card">
-                            <div className="event-card-image">
-                                <img src={tempImg} alt={event.title} />
-                                <div className="event-card-date">{event.date}</div>
-                            </div>
-                            <div className="event-card-content">
-                                <h4 className="event-card-title">{event.title}</h4>
-                                <div className="event-card-tag">{event.tag}</div>
-                            </div>
-                        </a>
-                    ))}
+                    {loading ? (
+                        <div className="loading-message">Đang tải sự kiện...</div>
+                    ) : error ? (
+                        <div className="error-message">Lỗi: {error}</div>
+                    ) : events.length === 0 ? (
+                        <div className="empty-message">Chưa có sự kiện</div>
+                    ) : (
+                        events.map((event) => (
+                            <Link to={`/van-hoa/su-kien/${event.id}`} key={event.id} className="event-card">
+                                <div className="event-card-image">
+                                    <img 
+                                        src={event.imgCover || getFirstImageFromContent(event.content) || tempImg} 
+                                        alt={event.title} 
+                                    />
+                                    <div className="event-card-date">{formatDate(event.createdAt)}</div>
+                                </div>
+                                <div className="event-card-content">
+                                    <h4 className="event-card-title">{event.title}</h4>
+                                    <div className="event-card-tag">{event.metadata?.tag || 'Sự kiện'}</div>
+                                </div>
+                            </Link>
+                        ))
+                    )}
                 </aside>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import TipTapEditor from '../components/TipTapEditor';
 import './css/Admin.css';
 
@@ -15,29 +15,6 @@ const CONTENT_TYPES = [
     { id: 'site', label: 'Di Tích', icon: '🏛️' },
 ];
 
-// Extract plain text from TipTap JSON for preview
-const getTextPreview = (content, maxLength = 150) => {
-    if (!content || !content.content) return 'Chưa có nội dung';
-    
-    const extractText = (nodes) => {
-        let text = '';
-        for (const node of nodes) {
-            if (node.type === 'text') {
-                text += node.text;
-            } else if (node.content) {
-                text += extractText(node.content);
-            }
-            if (node.type === 'paragraph' || node.type === 'heading') {
-                text += ' ';
-            }
-        }
-        return text;
-    };
-    
-    const text = extractText(content.content).trim();
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-};
-
 export default function Admin() {
     const [token, setToken] = useState(localStorage.getItem('adminToken') || '');
     const [activeType, setActiveType] = useState('all');
@@ -49,8 +26,14 @@ export default function Admin() {
     const [loginError, setLoginError] = useState('');
 
     // Form state
+    const [formTitle, setFormTitle] = useState('');
     const [formType, setFormType] = useState('news');
+    const [formImgCover, setFormImgCover] = useState('');
+    const [formMetadata, setFormMetadata] = useState({ category: '', location: '' });
     const [formContent, setFormContent] = useState({ type: 'doc', content: [{ type: 'paragraph' }] });
+    const [uploadingCover, setUploadingCover] = useState(false);
+
+    const coverInputRef = useRef(null);
 
     // Auth header
     const authHeaders = {
@@ -101,6 +84,44 @@ export default function Admin() {
         if (token) fetchItems();
     }, [activeType, token]);
 
+    // Upload cover image
+    const handleCoverUpload = async (e) => {
+        const file = e.target.files?.[0];
+        console.log('[Upload Debug] File selected:', file);
+        console.log('[Upload Debug] Token exists:', !!token);
+        console.log('[Upload Debug] API_URL:', API_URL);
+        if (!file) return;
+
+        setUploadingCover(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            console.log('[Upload Debug] FormData created, calling:', `${API_URL}/uploads`);
+
+            const res = await fetch(`${API_URL}/uploads`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData,
+            });
+            console.log('[Upload Debug] Response status:', res.status, res.statusText);
+
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({ message: 'Upload failed' }));
+                console.error('[Upload Debug] Error response:', errorData);
+                throw new Error(errorData.message || 'Upload failed');
+            }
+            const data = await res.json();
+            console.log('[Upload Debug] Success data:', data);
+            const imageUrl = data.url.startsWith('http') ? data.url : `${API_URL.replace('/api', '')}${data.url}`;
+            setFormImgCover(imageUrl);
+        } catch (err) {
+            console.error('[Upload Debug] Catch error:', err);
+            alert(err.message || 'Failed to upload cover image');
+        }
+        setUploadingCover(false);
+        e.target.value = '';
+    };
+
     // Create/Update
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -112,7 +133,10 @@ export default function Admin() {
                 method,
                 headers: authHeaders,
                 body: JSON.stringify({
+                    title: formTitle || null,
                     type: formType,
+                    imgCover: formImgCover || null,
+                    metadata: (formType === 'site' || formType === 'policy') ? formMetadata : null,
                     content: formContent,
                 }),
             });
@@ -142,14 +166,20 @@ export default function Admin() {
 
     // Reset form
     const resetForm = () => {
+        setFormTitle('');
         setFormType('news');
+        setFormImgCover('');
+        setFormMetadata({ category: '', location: '' });
         setFormContent({ type: 'doc', content: [{ type: 'paragraph' }] });
     };
 
     // Open edit modal
     const openEdit = (item) => {
         setEditItem(item);
+        setFormTitle(item.title || '');
         setFormType(item.type);
+        setFormImgCover(item.imgCover || '');
+        setFormMetadata(item.metadata || { category: '', location: '' });
         setFormContent(item.content || { type: 'doc', content: [{ type: 'paragraph' }] });
         setShowModal(true);
     };
@@ -259,30 +289,37 @@ export default function Admin() {
                     <div className="admin-content-grid">
                         {items.map((item) => (
                             <div key={item.id} className="admin-content-card">
-                                <div className="admin-card-header">
-                                    <span className={`admin-card-type ${item.type}`}>
-                                        {CONTENT_TYPES.find((t) => t.id === item.type)?.label || item.type}
-                                    </span>
-                                    <span className="admin-card-date">
-                                        {new Date(item.createdAt).toLocaleDateString('vi-VN')}
-                                    </span>
-                                </div>
-                                <p className="admin-card-preview">
-                                    {getTextPreview(item.content)}
-                                </p>
-                                <div className="admin-card-actions">
-                                    <button
-                                        onClick={() => openEdit(item)}
-                                        className="admin-btn admin-btn-sm admin-btn-outline"
-                                    >
-                                        ✏️ Sửa
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(item.id)}
-                                        className="admin-btn admin-btn-sm admin-btn-danger"
-                                    >
-                                        🗑️ Xóa
-                                    </button>
+                                {item.imgCover && (
+                                    <div className="admin-card-cover">
+                                        <img src={item.imgCover} alt="" />
+                                    </div>
+                                )}
+                                <div className="admin-card-body">
+                                    <div className="admin-card-header">
+                                        <span className={`admin-card-type ${item.type}`}>
+                                            {CONTENT_TYPES.find((t) => t.id === item.type)?.label || item.type}
+                                        </span>
+                                        <span className="admin-card-date">
+                                            {new Date(item.createdAt).toLocaleDateString('vi-VN')}
+                                        </span>
+                                    </div>
+                                    <h3 className="admin-card-title">
+                                        {item.title || 'Untitled'}
+                                    </h3>
+                                    <div className="admin-card-actions">
+                                        <button
+                                            onClick={() => openEdit(item)}
+                                            className="admin-btn admin-btn-sm admin-btn-outline"
+                                        >
+                                            ✏️ Sửa
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(item.id)}
+                                            className="admin-btn admin-btn-sm admin-btn-danger"
+                                        >
+                                            🗑️ Xóa
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -290,10 +327,10 @@ export default function Admin() {
                 )}
             </main>
 
-            {/* Modal */}
+            {/* Modal - only closes via X button */}
             {showModal && (
-                <div className="admin-modal-overlay" onClick={() => setShowModal(false)}>
-                    <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="admin-modal-overlay">
+                    <div className="admin-modal">
                         <div className="admin-modal-header">
                             <h3>{editItem ? 'Chỉnh Sửa Nội Dung' : 'Thêm Nội Dung Mới'}</h3>
                             <button onClick={() => setShowModal(false)} className="admin-modal-close">
@@ -301,6 +338,17 @@ export default function Admin() {
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="admin-modal-body">
+                            {/* Title */}
+                            <div className="admin-form-group">
+                                <label>Tiêu đề</label>
+                                <input
+                                    type="text"
+                                    value={formTitle}
+                                    onChange={(e) => setFormTitle(e.target.value)}
+                                    placeholder="Nhập tiêu đề..."
+                                />
+                            </div>
+
                             {/* Type Selection */}
                             <div className="admin-form-group">
                                 <label>Loại nội dung</label>
@@ -317,6 +365,84 @@ export default function Admin() {
                                     ))}
                                 </div>
                             </div>
+
+                            {/* Cover Image */}
+                            <div className="admin-form-group">
+                                <label>Ảnh bìa</label>
+                                <div className="admin-cover-upload">
+                                    {formImgCover ? (
+                                        <div className="admin-cover-preview">
+                                            <img src={formImgCover} alt="Cover" />
+                                            <button
+                                                type="button"
+                                                className="admin-cover-remove"
+                                                onClick={() => setFormImgCover('')}
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            className="admin-cover-button"
+                                            onClick={() => coverInputRef.current?.click()}
+                                            disabled={uploadingCover}
+                                        >
+                                            {uploadingCover ? 'Đang tải...' : '📷 Chọn ảnh bìa'}
+                                        </button>
+                                    )}
+                                    <input
+                                        ref={coverInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleCoverUpload}
+                                        style={{ display: 'none' }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Site-specific metadata fields */}
+                            {formType === 'site' && (
+                                <>
+                                    <div className="admin-form-group">
+                                        <label>Phân loại di tích</label>
+                                        <select
+                                            value={formMetadata.category}
+                                            onChange={(e) => setFormMetadata({ ...formMetadata, category: e.target.value })}
+                                            className="admin-select"
+                                        >
+                                            <option value="">-- Chọn phân loại --</option>
+                                            <option value="Cấp Quốc Gia">Cấp Quốc Gia</option>
+                                            <option value="Cấp Tỉnh">Cấp Tỉnh</option>
+                                        </select>
+                                    </div>
+                                    <div className="admin-form-group">
+                                        <label>Địa điểm</label>
+                                        <input
+                                            type="text"
+                                            value={formMetadata.location}
+                                            onChange={(e) => setFormMetadata({ ...formMetadata, location: e.target.value })}
+                                            placeholder="Nhập địa điểm di tích..."
+                                        />
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Policy-specific metadata fields */}
+                            {formType === 'policy' && (
+                                <div className="admin-form-group">
+                                    <label>Phân loại chính sách</label>
+                                    <select
+                                        value={formMetadata.category}
+                                        onChange={(e) => setFormMetadata({ ...formMetadata, category: e.target.value })}
+                                        className="admin-select"
+                                    >
+                                        <option value="">-- Chọn phân loại --</option>
+                                        <option value="bao-ton-di-san">Bảo tồn di sản</option>
+                                        <option value="ho-tro-dan-toc">Hỗ trợ dân tộc thiểu số</option>
+                                    </select>
+                                </div>
+                            )}
 
                             {/* TipTap Editor */}
                             <div className="admin-form-group">

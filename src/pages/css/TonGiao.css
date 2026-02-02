@@ -1,0 +1,12 @@
+/* Font Face Declarations */
+@font-face {
+    font-family: 'UTM Copperplate';
+    src: url('../../assets/fonts/UTM Copperplate.ttf') format('truetype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'UTM Copperplate';
+    src: url('../../assets/fonts/UTM CopperplateB.ttf') format('truetype');
+    font-weight: bold;
+}
