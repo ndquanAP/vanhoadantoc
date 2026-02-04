@@ -165,16 +165,16 @@ export default function VanHoa() {
                 {/* Main Content - TIN TỨC */}
                 <section className="main-content">
                     <div className="section-header">
-                        <h2 className="section-title">Tin Tức</h2>
+                        <h2 className="section-title">Văn hóa</h2>
                         <Link to="/van-hoa/tin-tuc" className="section-see-all">Xem tất cả</Link>
                     </div>
 
                     {loading ? (
-                        <div className="loading-message">Đang tải tin tức...</div>
+                        <div className="loading-message">Đang tải văn hóa...</div>
                     ) : error ? (
                         <div className="error-message">Lỗi: {error}</div>
                     ) : newsItems.length === 0 ? (
-                        <div className="empty-message">Chưa có tin tức</div>
+                        <div className="empty-message">Chưa có tin tức văn hóa</div>
                     ) : (
                         newsItems.map((item) => (
                             <Link to={`/van-hoa/tin-tuc/${item.id}`} key={item.id} className="news-card">

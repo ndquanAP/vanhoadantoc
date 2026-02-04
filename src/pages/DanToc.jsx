@@ -91,10 +91,10 @@ export default function DanToc() {
                     </button>
 
                     {/* Title - using item.title from API */}
-                    <h1 className="text-3xl md:text-4xl font-serif tracking-widest uppercase text-white text-center px-4"
-                        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}
+                    <h1 className="text-3xl md:text-4xl font-serif tracking-widest uppercase text-white text-center px-4 tiptap-heading tiptap-h1"
+                        style={{ textShadow: '2px 2px 4px rgba(255, 255, 255, 0.3)', color: '#ffffffff' }}
                     >
-                        {selectedEthnic.title}
+                        DÂN TỘC {selectedEthnic.title}
                     </h1>
 
                     {/* Circular Avatar */}
@@ -210,7 +210,7 @@ export default function DanToc() {
             </header>
 
             {/* Grid of Ethnicities - now from API */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12 max-w-6xl w-full z-10">
+            <div className="grid grid-cols-3 md:grid-cols-3 gap-x-25 gap-y-0 max-w-6xl w-full z-10">
                 {ethnicGroups.map((ethnic) => {
                     // Get thumbnail: prefer imgCover, fallback to first image in content
                     const thumbnailImage = ethnic.imgCover || getFirstImageFromContent(ethnic.content) || danToc_1_img;

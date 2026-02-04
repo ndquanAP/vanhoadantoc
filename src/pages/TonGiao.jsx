@@ -106,7 +106,7 @@ export default function TonGiao() {
                     </h1>
 
                     {/* Circular Placeholder for Illustration */}
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-40 h-40 rounded-full z-30 bg-gray-200 overflow-hidden">
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-40 h-50 rounded-full z-30 bg-gray-200 overflow-hidden">
                         {/* Background Image */}
                         <img
                             src={infoAvaBG}
@@ -117,7 +117,7 @@ export default function TonGiao() {
                         <img
                             src={avatarImage}
                             alt={selectedReligion.title}
-                            className="absolute inset-0 w-full h-full object-contain z-40"
+                            className="absolute inset-0 w-full h-full object-scretch z-40"
                         />
                     </div>
                 </div>

@@ -6,13 +6,13 @@ const API_URL = 'http://localhost:3001/api';
 
 const CONTENT_TYPES = [
     { id: 'all', label: 'Tất cả', icon: '📋' },
-    { id: 'news', label: 'Tin Tức', icon: '📰' },
-    { id: 'event', label: 'Sự Kiện', icon: '📅' },
-    { id: 'policy', label: 'Chính Sách', icon: '📜' },
     { id: 'ethnic', label: 'Dân Tộc', icon: '👥' },
     { id: 'religious', label: 'Tôn Giáo', icon: '🕌' },
-    { id: 'location', label: 'Địa Điểm', icon: '📍' },
     { id: 'site', label: 'Di Tích', icon: '🏛️' },
+    { id: 'news', label: 'Văn Hóa', icon: '📰' },
+    { id: 'policy', label: 'Chính Sách', icon: '📜' },
+    { id: 'event', label: 'Sự Kiện', icon: '📅' },
+    { id: 'users', label: 'Người Dùng', icon: '👤' },
 ];
 
 export default function Admin() {
@@ -27,6 +27,11 @@ export default function Admin() {
 
     // Form state
     const [formTitle, setFormTitle] = useState('');
+    const [formEmail, setFormEmail] = useState('');
+    const [formPassword, setFormPassword] = useState('');
+    const [formRole, setFormRole] = useState('manager');
+    const [formName, setFormName] = useState('');
+    
     const [formType, setFormType] = useState('news');
     const [formImgCover, setFormImgCover] = useState('');
     const [formMetadata, setFormMetadata] = useState({ category: '', location: '' });
@@ -70,12 +75,28 @@ export default function Admin() {
     const fetchItems = async () => {
         setLoading(true);
         try {
-            const typeParam = activeType !== 'all' ? `?type=${activeType}` : '';
-            const res = await fetch(`${API_URL}/content${typeParam}`);
-            const data = await res.json();
-            setItems(data.items || []);
+            let url = '';
+            if (activeType === 'users') {
+                url = `${API_URL}/users`;
+            } else {
+                const typeParam = activeType !== 'all' ? `?type=${activeType}` : '';
+                url = `${API_URL}/content${typeParam}`;
+            }
+
+            const res = await fetch(url, {
+                headers: activeType === 'users' ? authHeaders : {},
+            });
+            
+            if (activeType === 'users') {
+                const data = await res.json();
+                setItems(data || []);
+            } else {
+                const data = await res.json();
+                setItems(data.items || []);
+            }
         } catch (err) {
             console.error('Fetch error:', err);
+            setItems([]);
         }
         setLoading(false);
     };
@@ -122,23 +143,46 @@ export default function Admin() {
         e.target.value = '';
     };
 
-    // Create/Update
     const handleSubmit = async (e) => {
         e.preventDefault();
         const method = editItem ? 'PATCH' : 'POST';
-        const url = editItem ? `${API_URL}/content/${editItem.id}` : `${API_URL}/content`;
+        let url;
+        
+        if (activeType === 'users') {
+            url = editItem ? `${API_URL}/users/${editItem.id}` : `${API_URL}/users`;
+        } else {
+            url = editItem ? `${API_URL}/content/${editItem.id}` : `${API_URL}/content`;
+        }
 
         try {
-            const res = await fetch(url, {
-                method,
-                headers: authHeaders,
-                body: JSON.stringify({
+            let body;
+            
+            if (activeType === 'users') {
+                // User payload
+                body = {
+                    email: formEmail,
+                    name: formName,
+                    role: formRole,
+                };
+                // Only include password if creating new user or if password field has value (for update)
+                if (!editItem || formPassword) {
+                    body.password = formPassword;
+                }
+            } else {
+                // Content payload
+                body = {
                     title: formTitle || null,
                     type: formType,
                     imgCover: formImgCover || null,
                     metadata: (formType === 'site' || formType === 'policy') ? formMetadata : null,
                     content: formContent,
-                }),
+                };
+            }
+
+            const res = await fetch(url, {
+                method,
+                headers: authHeaders,
+                body: JSON.stringify(body),
             });
             if (!res.ok) throw new Error('Lưu thất bại');
             setShowModal(false);
@@ -154,7 +198,8 @@ export default function Admin() {
     const handleDelete = async (id) => {
         if (!confirm('Bạn có chắc muốn xóa nội dung này?')) return;
         try {
-            await fetch(`${API_URL}/content/${id}`, {
+            const url = activeType === 'users' ? `${API_URL}/users/${id}` : `${API_URL}/content/${id}`;
+            await fetch(url, {
                 method: 'DELETE',
                 headers: authHeaders,
             });
@@ -167,20 +212,34 @@ export default function Admin() {
     // Reset form
     const resetForm = () => {
         setFormTitle('');
-        setFormType('news');
+        setFormType(activeType === 'users' ? 'users' : 'news'); // Reset to news if not in users mode, but keep users if in users mode? Actually best to reset based on activeType
         setFormImgCover('');
         setFormMetadata({ category: '', location: '' });
         setFormContent({ type: 'doc', content: [{ type: 'paragraph' }] });
+
+        // User form reset
+        setFormEmail('');
+        setFormPassword('');
+        setFormName('');
+        setFormRole('manager');
     };
 
     // Open edit modal
     const openEdit = (item) => {
         setEditItem(item);
         setFormTitle(item.title || '');
-        setFormType(item.type);
+        setFormType(item.type || 'news'); // item.type might be undefined for users
         setFormImgCover(item.imgCover || '');
         setFormMetadata(item.metadata || { category: '', location: '' });
         setFormContent(item.content || { type: 'doc', content: [{ type: 'paragraph' }] });
+        
+        // Sets user fields
+        if (activeType === 'users') {
+            setFormEmail(item.email || '');
+            setFormName(item.name || '');
+            setFormRole(item.role || 'manager');
+            setFormPassword(''); // Don't show password
+        }
         setShowModal(true);
     };
 
@@ -242,7 +301,7 @@ export default function Admin() {
 
             {/* Sidebar */}
             <aside className="admin-sidebar">
-                {CONTENT_TYPES.slice(1).map((type) => (
+                {CONTENT_TYPES.map((type) => (
                     <button
                         key={type.id}
                         className={`admin-tab ${activeType === type.id ? 'active' : ''}`}
@@ -265,18 +324,7 @@ export default function Admin() {
                     </button>
                 </div>
 
-                {/* Type Filter Pills */}
-                <div className="admin-type-filters">
-                    {CONTENT_TYPES.map((type) => (
-                        <button
-                            key={type.id}
-                            className={`admin-type-pill ${activeType === type.id ? 'active' : ''}`}
-                            onClick={() => setActiveType(type.id)}
-                        >
-                            {type.icon} {type.label}
-                        </button>
-                    ))}
-                </div>
+
 
                 {loading ? (
                     <div className="admin-loading">Đang tải...</div>
@@ -289,23 +337,43 @@ export default function Admin() {
                     <div className="admin-content-grid">
                         {items.map((item) => (
                             <div key={item.id} className="admin-content-card">
-                                {item.imgCover && (
+                                {activeType !== 'users' && item.imgCover && (
                                     <div className="admin-card-cover">
                                         <img src={item.imgCover} alt="" />
                                     </div>
                                 )}
                                 <div className="admin-card-body">
-                                    <div className="admin-card-header">
-                                        <span className={`admin-card-type ${item.type}`}>
-                                            {CONTENT_TYPES.find((t) => t.id === item.type)?.label || item.type}
-                                        </span>
-                                        <span className="admin-card-date">
-                                            {new Date(item.createdAt).toLocaleDateString('vi-VN')}
-                                        </span>
-                                    </div>
-                                    <h3 className="admin-card-title">
-                                        {item.title || 'Untitled'}
-                                    </h3>
+                                    {activeType === 'users' ? (
+                                        // User Card
+                                        <>
+                                            <div className="admin-card-header">
+                                                <span className={`admin-card-type user`}>
+                                                    {item.role === 'admin' ? '👮 Admin' : '👤 Manager'}
+                                                </span>
+                                                <span className="admin-card-date">
+                                                    {new Date(item.createdAt).toLocaleDateString('vi-VN')}
+                                                </span>
+                                            </div>
+                                            <h3 className="admin-card-title">{item.name}</h3>
+                                            <p className="admin-card-subtitle">{item.email}</p>
+                                        </>
+                                    ) : (
+                                        // Content Card
+                                        <>
+                                            <div className="admin-card-header">
+                                            <span className={`admin-card-type ${item.type}`}>
+                                                {CONTENT_TYPES.find((t) => t.id === item.type)?.label || item.type}
+                                            </span>
+                                            <span className="admin-card-date">
+                                                {new Date(item.createdAt).toLocaleDateString('vi-VN')}
+                                            </span>
+                                        </div>
+                                        <h3 className="admin-card-title">
+                                            {item.title || 'Untitled'}
+                                        </h3>
+                                        </>
+                                    )}
+                                    
                                     <div className="admin-card-actions">
                                         <button
                                             onClick={() => openEdit(item)}
@@ -338,120 +406,172 @@ export default function Admin() {
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="admin-modal-body">
-                            {/* Title */}
-                            <div className="admin-form-group">
-                                <label>Tiêu đề</label>
-                                <input
-                                    type="text"
-                                    value={formTitle}
-                                    onChange={(e) => setFormTitle(e.target.value)}
-                                    placeholder="Nhập tiêu đề..."
-                                />
-                            </div>
 
-                            {/* Type Selection */}
-                            <div className="admin-form-group">
-                                <label>Loại nội dung</label>
-                                <div className="admin-type-selection">
-                                    {CONTENT_TYPES.slice(1).map((type) => (
-                                        <button
-                                            key={type.id}
-                                            type="button"
-                                            className={`admin-type-option ${formType === type.id ? 'selected' : ''}`}
-                                            onClick={() => setFormType(type.id)}
-                                        >
-                                            {type.icon}<br />{type.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
 
-                            {/* Cover Image */}
-                            <div className="admin-form-group">
-                                <label>Ảnh bìa</label>
-                                <div className="admin-cover-upload">
-                                    {formImgCover ? (
-                                        <div className="admin-cover-preview">
-                                            <img src={formImgCover} alt="Cover" />
-                                            <button
-                                                type="button"
-                                                className="admin-cover-remove"
-                                                onClick={() => setFormImgCover('')}
-                                            >
-                                                ×
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            className="admin-cover-button"
-                                            onClick={() => coverInputRef.current?.click()}
-                                            disabled={uploadingCover}
-                                        >
-                                            {uploadingCover ? 'Đang tải...' : '📷 Chọn ảnh bìa'}
-                                        </button>
-                                    )}
-                                    <input
-                                        ref={coverInputRef}
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleCoverUpload}
-                                        style={{ display: 'none' }}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Site-specific metadata fields */}
-                            {formType === 'site' && (
-                                <>
+                            {/* User Form Fields (only when in Users mode) */}
+                            {activeType === 'users' ? (
+                                <div className="admin-user-form">
                                     <div className="admin-form-group">
-                                        <label>Phân loại di tích</label>
-                                        <select
-                                            value={formMetadata.category}
-                                            onChange={(e) => setFormMetadata({ ...formMetadata, category: e.target.value })}
-                                            className="admin-select"
-                                        >
-                                            <option value="">-- Chọn phân loại --</option>
-                                            <option value="Cấp Quốc Gia">Cấp Quốc Gia</option>
-                                            <option value="Cấp Tỉnh">Cấp Tỉnh</option>
-                                        </select>
-                                    </div>
-                                    <div className="admin-form-group">
-                                        <label>Địa điểm</label>
+                                        <label>Tên người dùng</label>
                                         <input
                                             type="text"
-                                            value={formMetadata.location}
-                                            onChange={(e) => setFormMetadata({ ...formMetadata, location: e.target.value })}
-                                            placeholder="Nhập địa điểm di tích..."
+                                            value={formName}
+                                            onChange={(e) => setFormName(e.target.value)}
+                                            placeholder="Nhập tên..."
+                                            required
+                                        />
+                                    </div>
+                                    <div className="admin-form-group">
+                                        <label>Email</label>
+                                        <input
+                                            type="email"
+                                            value={formEmail}
+                                            onChange={(e) => setFormEmail(e.target.value)}
+                                            placeholder="email@example.com"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="admin-form-group">
+                                        <label>Mật khẩu {editItem && '(Để trống nếu không đổi)'}</label>
+                                        <input
+                                            type="password"
+                                            value={formPassword}
+                                            onChange={(e) => setFormPassword(e.target.value)}
+                                            placeholder="••••••••"
+                                            required={!editItem}
+                                        />
+                                    </div>
+                                    <div className="admin-form-group">
+                                        <label>Vai trò</label>
+                                        <select
+                                            value={formRole}
+                                            onChange={(e) => setFormRole(e.target.value)}
+                                            className="admin-select"
+                                        >
+                                            <option value="manager">Manager</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    {/* Content Form Fields */}
+                                    {/* Title */}
+                                    <div className="admin-form-group">
+                                        <label>Tiêu đề</label>
+                                        <input
+                                            type="text"
+                                            value={formTitle}
+                                            onChange={(e) => setFormTitle(e.target.value)}
+                                            placeholder="Nhập tiêu đề..."
+                                        />
+                                    </div>
+
+                                    {/* Type Selection */}
+                                    <div className="admin-form-group">
+                                        <label>Loại nội dung</label>
+                                        <div className="admin-type-selection">
+                                            {CONTENT_TYPES.filter(t => t.id !== 'all' && t.id !== 'users').map((type) => (
+                                                <button
+                                                    key={type.id}
+                                                    type="button"
+                                                    className={`admin-type-option ${formType === type.id ? 'selected' : ''}`}
+                                                    onClick={() => setFormType(type.id)}
+                                                >
+                                                    {type.icon}<br />{type.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Cover Image */}
+                                    <div className="admin-form-group">
+                                        <label>Ảnh bìa</label>
+                                        <div className="admin-cover-upload">
+                                            {formImgCover ? (
+                                                <div className="admin-cover-preview">
+                                                    <img src={formImgCover} alt="Cover" />
+                                                    <button
+                                                        type="button"
+                                                        className="admin-cover-remove"
+                                                        onClick={() => setFormImgCover('')}
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    className="admin-cover-button"
+                                                    onClick={() => coverInputRef.current?.click()}
+                                                    disabled={uploadingCover}
+                                                >
+                                                    {uploadingCover ? 'Đang tải...' : '📷 Chọn ảnh bìa'}
+                                                </button>
+                                            )}
+                                            <input
+                                                ref={coverInputRef}
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleCoverUpload}
+                                                style={{ display: 'none' }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Site-specific metadata fields */}
+                                    {formType === 'site' && (
+                                        <>
+                                            <div className="admin-form-group">
+                                                <label>Phân loại di tích</label>
+                                                <select
+                                                    value={formMetadata.category}
+                                                    onChange={(e) => setFormMetadata({ ...formMetadata, category: e.target.value })}
+                                                    className="admin-select"
+                                                >
+                                                    <option value="">-- Chọn phân loại --</option>
+                                                    <option value="Cấp Quốc Gia">Cấp Quốc Gia</option>
+                                                    <option value="Cấp Tỉnh">Cấp Tỉnh</option>
+                                                </select>
+                                            </div>
+                                            <div className="admin-form-group">
+                                                <label>Địa điểm</label>
+                                                <input
+                                                    type="text"
+                                                    value={formMetadata.location}
+                                                    onChange={(e) => setFormMetadata({ ...formMetadata, location: e.target.value })}
+                                                    placeholder="Nhập địa điểm di tích..."
+                                                />
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {/* Policy-specific metadata fields */}
+                                    {formType === 'policy' && (
+                                        <div className="admin-form-group">
+                                            <label>Phân loại chính sách</label>
+                                            <select
+                                                value={formMetadata.category}
+                                                onChange={(e) => setFormMetadata({ ...formMetadata, category: e.target.value })}
+                                                className="admin-select"
+                                            >
+                                                <option value="">-- Chọn phân loại --</option>
+                                                <option value="bao-ton-di-san">Bảo tồn di sản</option>
+                                                <option value="ho-tro-dan-toc">Hỗ trợ dân tộc thiểu số</option>
+                                            </select>
+                                        </div>
+                                    )}
+
+                                    {/* TipTap Editor */}
+                                    <div className="admin-form-group">
+                                        <label>Nội dung</label>
+                                        <TipTapEditor
+                                            content={formContent}
+                                            onChange={setFormContent}
                                         />
                                     </div>
                                 </>
                             )}
-
-                            {/* Policy-specific metadata fields */}
-                            {formType === 'policy' && (
-                                <div className="admin-form-group">
-                                    <label>Phân loại chính sách</label>
-                                    <select
-                                        value={formMetadata.category}
-                                        onChange={(e) => setFormMetadata({ ...formMetadata, category: e.target.value })}
-                                        className="admin-select"
-                                    >
-                                        <option value="">-- Chọn phân loại --</option>
-                                        <option value="bao-ton-di-san">Bảo tồn di sản</option>
-                                        <option value="ho-tro-dan-toc">Hỗ trợ dân tộc thiểu số</option>
-                                    </select>
-                                </div>
-                            )}
-
-                            {/* TipTap Editor */}
-                            <div className="admin-form-group">
-                                <label>Nội dung</label>
-                                <TipTapEditor
-                                    content={formContent}
-                                    onChange={setFormContent}
-                                />
-                            </div>
 
                             <div className="admin-modal-footer">
                                 <button
